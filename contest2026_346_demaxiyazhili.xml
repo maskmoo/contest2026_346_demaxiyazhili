@@ -11,7 +11,7 @@
   <project path="contest2026_346_demaxiyazhili" name="contest2026_346_demaxiyazhili">
     <linkfile src="app/hello_app" dest="packages/demos/contest2026_346_hello_app"/>
     <linkfile src="quickapp/hello_quickapp" dest="packages/apps/contest2026_346_hello_quickapp"/>
-    <linkfile src="board/gd32vw553h-eval" dest="vendor/openvela/boards/gd32vw553h-eval"/>
+    <linkfile src="board/gd32vw553x/gd32vw553h-eval" dest="vendor/openvela/boards/gd32vw553x/gd32vw553h-eval"/>
     <linkfile src="chips/gd32vw55x" dest="vendor/openvela/chips/gd32vw55x"/>
   </project>
 </manifest>
