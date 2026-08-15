@@ -208,7 +208,7 @@
   <project path="packages/ai_agent" name="packages_ai_agent"/>
   <project path="packages/demos" name="packages_demos"/>
   <project path="packages/fe/examples" name="packages_fe_examples"/>
-  <project path="prebuilts/clang-wasm/linux-x86_64" name="prebuilts_clang_linux_wasm" clone-depth="1"/>
+  <!-- <project path="prebuilts/clang-wasm/linux-x86_64" name="prebuilts_clang_linux_wasm" clone-depth="1"/> -->
   <project path="tests" name="tests"/>
   <project path="vendor" name="vendor"/>
   <project path="vendor/allwinnertech" name="vendor_allwinnertech"/>
@@ -246,22 +246,23 @@
   </project>
 
   
-  <project path="prebuilts/gcc/linux-x86_64/arm-none-eabi" name="prebuilts_gcc_linux-x86_64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-linux"/>
-  <project path="prebuilts/gcc/linux-x86_64/aarch64-none-elf" name="prebuilts_gcc_linux-x86_64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/>
-  <project path="prebuilts/gcc/linux-x86_64/x86_64-none-elf" name="prebuilts_gcc_linux-x86_64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/>
+  <!-- Non-riscv GCC toolchains commented out for riscv-only build -->
+  <!-- <project path="prebuilts/gcc/linux-x86_64/arm-none-eabi" name="prebuilts_gcc_linux-x86_64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-linux"/> -->
+  <!-- <project path="prebuilts/gcc/linux-x86_64/aarch64-none-elf" name="prebuilts_gcc_linux-x86_64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/> -->
+  <!-- <project path="prebuilts/gcc/linux-x86_64/x86_64-none-elf" name="prebuilts_gcc_linux-x86_64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/> -->
   <project path="prebuilts/gcc/linux-x86_64/riscv-none-elf" name="prebuilts_gcc_linux-x86_64_riscv-none-elf" clone-depth="1" groups="notdefault,platform-linux"/>
-  <project path="prebuilts/gcc/linux-aarch64/arm-none-eabi" name="prebuilts_gcc_linux-aarch64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-linux"/>
-  <project path="prebuilts/gcc/linux-aarch64/aarch64-none-elf" name="prebuilts_gcc_linux-aarch64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/>
-  <project path="prebuilts/gcc/linux-aarch64/x86_64-none-elf" name="prebuilts_gcc_linux-aarch64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/>
-  <project path="prebuilts/gcc/linux-aarch64/riscv-none-elf" name="prebuilts_gcc_linux-aarch64_riscv-none-elf" clone-depth="1" groups="notdefault,platform-linux"/>
-  <project path="prebuilts/gcc/windows-x86_64/arm-none-eabi" name="prebuilts_gcc_windows-x86_64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-windows"/>
-  <project path="prebuilts/gcc/windows-x86_64/aarch64-none-elf" name="prebuilts_gcc_windows-x86_64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-windows"/>
-  <project path="prebuilts/gcc/windows-x86_64/x86_64-none-elf" name="prebuilts_gcc_windows-x86_64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-windows"/>
-  <project path="prebuilts/gcc/windows-x86_64/riscv-none-elf" name="prebuilts_gcc_windows-x86_64_riscv-none-elf" clone-depth="1" groups="notdefault,platform-windows"/>
-  <project path="prebuilts/gcc/darwin-aarch64/arm-none-eabi" name="prebuilts_gcc_darwin-aarch64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-darwin"/>
-  <project path="prebuilts/gcc/darwin-aarch64/aarch64-none-elf" name="prebuilts_gcc_darwin-aarch64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-darwin"/>
-  <project path="prebuilts/gcc/darwin-aarch64/x86_64-none-elf" name="prebuilts_gcc_darwin-aarch64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-darwin"/>
-  <project path="prebuilts/gcc/darwin-aarch64/riscv-none-elf" name="prebuilts_gcc_darwin-aarch64_riscv-none-elf" clone-depth="1" groups="notdefault,platform-darwin"/>
+  <!-- <project path="prebuilts/gcc/linux-aarch64/arm-none-eabi" name="prebuilts_gcc_linux-aarch64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-linux"/> -->
+  <!-- <project path="prebuilts/gcc/linux-aarch64/aarch64-none-elf" name="prebuilts_gcc_linux-aarch64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/> -->
+  <!-- <project path="prebuilts/gcc/linux-aarch64/x86_64-none-elf" name="prebuilts_gcc_linux-aarch64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-linux"/> -->
+  <!-- <project path="prebuilts/gcc/linux-aarch64/riscv-none-elf" name="prebuilts_gcc_linux-aarch64_riscv-none-elf" clone-depth="1" groups="notdefault,platform-linux"/> -->
+  <!-- <project path="prebuilts/gcc/windows-x86_64/arm-none-eabi" name="prebuilts_gcc_windows-x86_64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-windows"/> -->
+  <!-- <project path="prebuilts/gcc/windows-x86_64/aarch64-none-elf" name="prebuilts_gcc_windows-x86_64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-windows"/> -->
+  <!-- <project path="prebuilts/gcc/windows-x86_64/x86_64-none-elf" name="prebuilts_gcc_windows-x86_64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-windows"/> -->
+  <!-- <project path="prebuilts/gcc/windows-x86_64/riscv-none-elf" name="prebuilts_gcc_windows-x86_64_riscv-none-elf" clone-depth="1" groups="notdefault,platform-windows"/> -->
+  <!-- <project path="prebuilts/gcc/darwin-aarch64/arm-none-eabi" name="prebuilts_gcc_darwin-aarch64_arm-none-eabi" clone-depth="1" groups="notdefault,platform-darwin"/> -->
+  <!-- <project path="prebuilts/gcc/darwin-aarch64/aarch64-none-elf" name="prebuilts_gcc_darwin-aarch64_aarch64-none-elf" clone-depth="1" groups="notdefault,platform-darwin"/> -->
+  <!-- <project path="prebuilts/gcc/darwin-aarch64/x86_64-none-elf" name="prebuilts_gcc_darwin-aarch64_x86_64-none-elf" clone-depth="1" groups="notdefault,platform-darwin"/> -->
+  <!-- <project path="prebuilts/gcc/darwin-aarch64/riscv-none-elf" name="prebuilts_gcc_darwin-aarch64_riscv-none-elf" clone-depth="1" groups="notdefault,platform-darwin"/> -->
 
   
   <project path="prebuilts/qemu/linux-x86_64" name="prebuilts_qemu_linux-x86_64" clone-depth="1" groups="notdefault,platform-linux"/>
@@ -281,10 +282,10 @@
   <project path="prebuilts/cmake/darwin-aarch64" name="prebuilts_cmake_darwin-aarch64" clone-depth="1" groups="notdefault,platform-darwin"/>
   <project path="prebuilts/cmake/windows-x86_64" name="prebuilts_cmake_windows-x86_64" clone-depth="1" groups="notdefault,platform-windows"/>
 
-  <project path="prebuilts/gcc/linux-x86_64/xtensa-esp32s3-elf" name="openvela-toolchain-external/prebuilts_gcc_linux-x86_64_xtensa-esp32s3-elf" remote="git" revision="main" clone-depth="1" groups="notdefault,platform-linux"/>
+  <!-- <project path="prebuilts/gcc/linux-x86_64/xtensa-esp32s3-elf" name="openvela-toolchain-external/prebuilts_gcc_linux-x86_64_xtensa-esp32s3-elf" remote="git" revision="main" clone-depth="1" groups="notdefault,platform-linux"/> -->
 
   
-  <project path="prebuilts/gcc/linux-x86_64/tricore-elf" name="prebuilts_gcc_linux_tricore" revision="trunk" clone-depth="1" groups="notdefault,platform-linux"/>
+  <!-- <project path="prebuilts/gcc/linux-x86_64/tricore-elf" name="prebuilts_gcc_linux_tricore" revision="trunk" clone-depth="1" groups="notdefault,platform-linux"/> -->
 
 
 
