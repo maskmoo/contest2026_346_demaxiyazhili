@@ -20,10 +20,12 @@ GD32VW553H-EVAL 是基于 GD32VW553H 微控制器的评估板，集成了 WiFi �
 | USART_RX | PA8 | 接收 | 串口控制台 |
 
 #### I2C
-| 接口 | 引脚 | 功能 |
-|------|------|------|
-| I2C0_SCL | PA2 | 时钟线 |
-| I2C0_SDA | PA3 | 数据线 |
+| 接口 | 引脚 | 功能 | 说明 |
+|------|------|------|------|
+| I2C0_SCL | PA2 | 时钟线 | 始终可用，无冲突 |
+| I2C0_SDA | PA3 | 数据线 | 始终可用，无冲突 |
+| I2C1_SCL | PB12 | 时钟线 | 与 LCD_RESET 冲突 |
+| I2C1_SDA | PB13 | 数据线 | 与 LCD_D/C 冲突 |
 
 ### 模拟接口
 
@@ -83,22 +85,58 @@ GD32VW553H-EVAL 是基于 GD32VW553H 微控制器的评估板，集成了 WiFi �
 
 ### 冲突引脚
 
-| 引脚 | 功能1 | 功能2 | 说明 |
-|------|-------|-------|------|
-| PA4 | LED1 | QSPI_SCK | 二选一 |
-| PA5 | LED2 | QSPI_NSS | 二选一 |
-| PA6 | LED3 | QSPI_IO0 | 二选一 |
-| PA7 | - | QSPI_IO1 | QSPI专用 |
-| PB15 | USART_TX | IR_OUT | 二选一 |
+| 引脚 | 功能1 | 功能2 | Kconfig 配置 |
+|------|-------|-------|--------------|
+| PA4 | LED1 | QSPI_SCK | BOARD_LED_ENABLE / GD32VW55X_QSPI |
+| PA5 | LED2 | QSPI_NSS | BOARD_LED_ENABLE / GD32VW55X_QSPI |
+| PA6 | LED3 | QSPI_IO0 | BOARD_LED_ENABLE / GD32VW55X_QSPI |
+| PB15 | USART_TX | IR_OUT | BOARD_USART_CONSOLE / BOARD_IR_OUTPUT_ENABLE |
+| PB12 | LCD_RESET | I2C1_SCL | BOARD_LCD_ENABLE / BOARD_I2C1_ENABLE |
+| PB13 | LCD_D/C | I2C1_SDA | BOARD_LCD_ENABLE / BOARD_I2C1_ENABLE |
+
+**无冲突接口**：
+- I2C0: PA2 (SCL) / PA3 (SDA) - 始终可用
+
+### Kconfig 配置选项
+
+#### LED 与 QSPI Flash 冲突
+```kconfig
+# 启用 LED（禁用 QSPI Flash）
+CONFIG_BOARD_LED_ENABLE=y
+
+# 启用 QSPI Flash（禁用 LED）
+CONFIG_GD32VW55X_QSPI=y
+```
+
+#### USART 与 IR 输出冲突
+```kconfig
+# 启用 USART 控制台（禁用 IR 输出）
+CONFIG_BOARD_USART_CONSOLE=y
+
+# 启用 IR 输出（禁用 USART 控制台）
+CONFIG_BOARD_IR_OUTPUT_ENABLE=y
+```
+
+#### LCD 与 I2C1 冲突
+```kconfig
+# 启用 LCD（禁用 I2C1）
+CONFIG_BOARD_LCD_ENABLE=y
+
+# 启用 I2C1（禁用 LCD）
+CONFIG_BOARD_I2C1_ENABLE=y
+
+# I2C0 (PA2/PA3) 始终可用，无需配置
+```
 
 ### 推荐配置
 
-1. **基础串口调试**: 使用USART (PB15/PA8)
-2. **LED控制**: 使用PA4/PA5/PA6，禁用QSPI Flash
-3. **QSPI Flash**: 使用PA4-PA7/PB3/PB4，禁用LED
-4. **LCD显示**: 使用SPI (PA9/PA10/PA11/PA12) + LCD控制 (PB12/PB13)
-5. **传感器开发**: 使用I2C0 (PA2/PA3)
-6. **红外通信**: 使用PB15 (IR_OUT) + PB11 (TIMER_CH2)，禁用USART
+1. **基础串口调试**: 使用USART (PB15/PA8)，启用 `BOARD_USART_CONSOLE`
+2. **LED控制**: 使用PA4/PA5/PA6，启用 `BOARD_LED_ENABLE`，禁用 QSPI
+3. **QSPI Flash**: 使用PA4-PA7/PB3/PB4，启用 `GD32VW55X_QSPI`，禁用 LED
+4. **LCD显示**: 使用SPI (PA9-PA12) + LCD控制 (PB12/PB13)，启用 `BOARD_LCD_ENABLE`
+5. **传感器开发**: 使用I2C0 (PA2/PA3)，始终可用，无冲突
+6. **红外通信**: 使用PB15 (IR_OUT) + PB11 (TIMER_CH2)，启用 `BOARD_IR_OUTPUT_ENABLE`，禁用 USART
+7. **I2C1扩展**: 使用PB12/PB13，启用 `BOARD_I2C1_ENABLE`，禁用 LCD
 
 ## 配置说明
 
@@ -110,12 +148,11 @@ configs/
 ├── nsh/             # 基础 NSH Shell
 ├── adc/             # ADC 示例
 ├── ble/             # BLE 蓝牙
+├── e2prom/          # E2PROM I2C 实验
 ├── littlefs/        # LittleFS 文件系统
 ├── ostest/          # 操作系统测试
 ├── periph/          # 外设测试
 ├── pwm/             # PWM 示例
-├── sdcard/          # SD 卡
-├── sht3x/           # SHT3x 温湿度传感器
 ├── sta_softap/      # WiFi STA/SoftAP
 └── wapi/            # WAPI 无线
 ```
@@ -177,19 +214,13 @@ configs/
 - **功能**: PWM 脉宽调制输出
 - **硬件**: 定时器通道
 
-#### sdcard - SD 卡
-- **功能**: SD 卡读写
-- **硬件**: SPI 接口
-- **特性**:
-  - FAT 文件系统
-  - MMC/SD 支持
-
-#### sht3x - 温湿度传感器
-- **功能**: SHT3x 传感器读取
+#### e2prom - E2PROM 实验
+- **功能**: E2PROM 读写实验
 - **硬件**: I2C0 (PA2/PA3)
 - **特性**:
   - I2C 轮询模式
-  - 传感器数据读取
+  - I2C 工具 (i2ctool)
+  - 用于 AT24xx 等 E2PROM 芯片
 
 #### sta_softap - WiFi 热点
 - **功能**: WiFi STA 和 SoftAP 模式
@@ -209,7 +240,8 @@ configs/
 1. **首次使用**: 建议从 `nsh` 配置开始，验证基本功能
 2. **外设测试**: 使用 `periph` 配置全面测试板载外设
 3. **无线开发**: 使用 `wapi` 或 `sta_softap` 配置进行 WiFi 开发
-4. **存储应用**: 使用 `littlefs` 或 `sdcard` 配置进行文件系统开发
+4. **存储应用**: 使用 `littlefs` 配置进行文件系统开发
+5. **E2PROM实验**: 使用 `e2prom` 配置进行 I2C E2PROM 读写
 
 ## 注意事项
 
