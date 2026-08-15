@@ -13,83 +13,92 @@ GD32VW553H-EVAL 是基于 GD32VW553H 微控制器的评估板，集成了 WiFi �
 
 ### 通信接口
 
-#### UART
-| 接口 | 引脚 | 功能 | 说明 |
-|------|------|------|------|
-| UART2_TX | PA6 | 发送 | 默认串口控制台 (GD-Link虚拟串口) |
-| UART2_RX | PA7 | 接收 | 默认串口控制台 |
-| UART1_TX | PB15 | 发送 | 扩展串口 |
-| UART1_RX | PA8 | 接收 | 扩展串口 |
-| USART0_TX | PA0 | 发送 | 扩展串口 |
-| USART0_RX | PA1 | 接收 | 扩展串口 |
+#### USART
+| 接口 | 引脚 | 功能 |
+|------|------|------|
+| USART_TX | PB15 | 发送 |
+| USART_RX | PA8 | 接收 |
 
 #### I2C
-| 接口 | 引脚 | 功能 | 说明 |
-|------|------|------|------|
-| I2C0_SCL | PA2 | 时钟线 | 默认配置 (无SPI时) |
-| I2C0_SDA | PA3 | 数据线 | 默认配置 (无SPI时) |
-| I2C0_SCL | PB0 | 时钟线 | SPI启用时的备用配置 |
-| I2C0_SDA | PB1 | 数据线 | SPI启用时的备用配置 |
-| I2C1_SCL | PB12 | 时钟线 | 扩展I2C |
-| I2C1_SDA | PB13 | 数据线 | 扩展I2C |
-
-#### SPI
-| 接口 | 引脚 | 功能 | 说明 |
-|------|------|------|------|
-| SPI_SCK | PA2 | 时钟 | SPI0 |
-| SPI_MISO | PA1 | 主入从出 | SPI0 |
-| SPI_MOSI | PA0 | 主出从入 | SPI0 |
-| SPI0_CS | PA4 | 片选 | SD卡片选 (GPIO输出) |
+| 接口 | 引脚 | 功能 |
+|------|------|------|
+| I2C0_SCL | PA2 | 时钟线 |
+| I2C0_SDA | PA3 | 数据线 |
 
 ### 模拟接口
 
 #### ADC
 | 通道 | 引脚 | 说明 |
 |------|------|------|
-| ADC_IN8 | PB0 | 模拟输入通道 8 (无SPI时可用) |
+| ADC_IN0 | PA1 | 模拟输入通道 0 |
 
 ### 人机交互
 
 #### LED
 | LED | 引脚 | 说明 |
 |-----|------|------|
-| LED1 | PC0 | 运行指示灯 |
-| LED2 | PC1 | 睡眠指示灯 |
-| LED3 | PC2 | 接收指示灯 |
-
-**注意**: LED 为高电平有效，使用推挽输出驱动。
+| LED1 | PA4 | 指示灯1 |
+| LED2 | PA5 | 指示灯2 |
+| LED3 | PA6 | 指示灯3 |
 
 #### 按键
 | 按键 | 引脚 | 说明 |
 |------|------|------|
-| KEY1 | PA0 | 用户按键 (与USART0_TX共用) |
+| K1 | RESET | 复位按键 |
+| K2 | PA0 | 唤醒按键 (Wakeup) |
 
 ### 存储
 
-#### SPI Flash (QSPI)
+#### QSPI Flash
 | 信号 | 引脚 | 说明 |
 |------|------|------|
-| QSPI_SCK | PA4 | 时钟 (与SPI_CS共用) |
+| QSPI_SCK | PA4 | 时钟 |
 | QSPI_NSS | PA5 | 片选 |
-| QSPI_IO0 | PA6 | 数据线0 (与UART2_TX共用) |
-| QSPI_IO1 | PA7 | 数据线1 (与UART2_RX共用) |
+| QSPI_IO0 | PA6 | 数据线0 |
+| QSPI_IO1 | PA7 | 数据线1 |
 | QSPI_IO2 | PB3 | 数据线2 |
 | QSPI_IO3 | PB4 | 数据线3 |
 
-### 调试接口
+### 显示
 
-#### JTAG/SWD
+#### SPI LCD
 | 信号 | 引脚 | 说明 |
 |------|------|------|
-| JNTRST | PB4 | JTAG复位 (与QSPI_IO3共用) |
-| JTDO | PB3 | JTAG数据输出 (与QSPI_IO2共用) |
+| SPI_NSS | PA12 | 片选 |
+| SPI_MOSI | PA9 | 主出从入 |
+| SPI_SCK | PA11 | 时钟 |
+| SPI_MISO | PA10 | 主入从出 |
+| LCD_RESET | PB12 | LCD复位 |
+| LCD_D/C | PB13 | 数据/命令选择 |
 
-### 定时器
+### 红外
 
-#### PWM
-| 通道 | 引脚 | 说明 |
+#### IRFP
+| 信号 | 引脚 | 说明 |
 |------|------|------|
-| TIMER1_CH0 | PA0 | PWM输出通道0 (AF1) |
+| IR_OUT | PB15 | 红外输出 (与USART_TX共用) |
+| TIMER_CH2 | PB11 | 定时器通道 |
+
+## 引脚复用说明
+
+### 冲突引脚
+
+| 引脚 | 功能1 | 功能2 | 说明 |
+|------|-------|-------|------|
+| PA4 | LED1 | QSPI_SCK | 二选一 |
+| PA5 | LED2 | QSPI_NSS | 二选一 |
+| PA6 | LED3 | QSPI_IO0 | 二选一 |
+| PA7 | - | QSPI_IO1 | QSPI专用 |
+| PB15 | USART_TX | IR_OUT | 二选一 |
+
+### 推荐配置
+
+1. **基础串口调试**: 使用USART (PB15/PA8)
+2. **LED控制**: 使用PA4/PA5/PA6，禁用QSPI Flash
+3. **QSPI Flash**: 使用PA4-PA7/PB3/PB4，禁用LED
+4. **LCD显示**: 使用SPI (PA9/PA10/PA11/PA12) + LCD控制 (PB12/PB13)
+5. **传感器开发**: 使用I2C0 (PA2/PA3)
+6. **红外通信**: 使用PB15 (IR_OUT) + PB11 (TIMER_CH2)，禁用USART
 
 ## 配置说明
 
@@ -125,17 +134,16 @@ configs/
 #### nsh - 基础配置
 - **功能**: 提供 NSH Shell 命令行接口
 - **特性**: 
-  - UART2 串口控制台 (PA6/PA7)
+  - USART 串口控制台 (PB15/PA8)
   - Hello World 示例
   - 基础文件系统支持 (procfs)
 
 #### adc - ADC 示例
 - **功能**: 演示 ADC 模数转换
-- **硬件**: ADC_IN8 (PB0)
+- **硬件**: ADC_IN0 (PA1)
 - **特性**:
   - 软件触发采样
   - 20 次采样示例
-  - **注意**: 需确保SPI未启用，否则PB0被I2C0占用
 
 #### ble - 蓝牙配置
 - **功能**: BLE 蓝牙通信
@@ -160,20 +168,18 @@ configs/
 #### periph - 外设测试
 - **功能**: 全面测试板载外设
 - **支持外设**:
-  - ADC, I2C, SPI, UART
+  - ADC, I2C, SPI, USART
   - PWM, 定时器
   - DMA, CRC, RNG
   - GPIO 中断, 看门狗
-- **注意**: 启用SPI时，I2C0会切换到备用引脚 (PB0/PB1)
 
 #### pwm - PWM 示例
 - **功能**: PWM 脉宽调制输出
-- **硬件**: TIMER1_CH0 (PA0)
-- **注意**: PA0与USART0_TX和KEY1共用
+- **硬件**: 定时器通道
 
 #### sdcard - SD 卡
 - **功能**: SD 卡读写
-- **硬件**: SPI0 (PA0/PA1/PA2) + CS (PA4)
+- **硬件**: SPI 接口
 - **特性**:
   - FAT 文件系统
   - MMC/SD 支持
@@ -184,7 +190,6 @@ configs/
 - **特性**:
   - I2C 轮询模式
   - 传感器数据读取
-  - **注意**: 与SPI共用引脚，不能同时使用
 
 #### sta_softap - WiFi 热点
 - **功能**: WiFi STA 和 SoftAP 模式
@@ -199,36 +204,6 @@ configs/
   - WAPI 命令行工具
   - 网络连接管理
 
-## 引脚复用说明
-
-### 冲突引脚
-
-| 引脚 | 功能1 | 功能2 | 功能3 | 说明 |
-|------|-------|-------|-------|------|
-| PA0 | USART0_TX | KEY1 | PWM(TIMER1_CH0) | 三选一 |
-| PA1 | USART0_RX | SPI_MISO | ADC_IN1 | 三选一 |
-| PA2 | I2C0_SCL | SPI_SCK | - | 二选一 |
-| PA3 | I2C0_SDA | SPI_MOSI | - | 二选一 |
-| PA4 | SPI_CS | QSPI_SCK | - | 二选一 |
-| PA5 | QSPI_NSS | - | - | 专用 |
-| PA6 | UART2_TX | QSPI_IO0 | - | 二选一 |
-| PA7 | UART2_RX | QSPI_IO1 | - | 二选一 |
-| PB0 | I2C0_SCL(SPI时) | ADC_IN8 | - | 二选一 |
-| PB1 | I2C0_SDA(SPI时) | - | - | 专用 |
-| PB3 | QSPI_IO2 | JTDO | - | 二选一 |
-| PB4 | QSPI_IO3 | JNTRST | - | 二选一 |
-| PB12 | I2C1_SCL | - | - | 专用 |
-| PB13 | I2C1_SDA | - | - | 专用 |
-| PB15 | UART1_TX | - | - | 专用 |
-| PA8 | UART1_RX | - | - | 专用 |
-
-### 推荐配置
-
-1. **基础串口调试**: 使用UART2 (PA6/PA7)，无需跳线
-2. **传感器开发**: 使用I2C0 (PA2/PA3)，禁用SPI
-3. **SD卡存储**: 使用SPI0 (PA0/PA1/PA2)，CS=PA4
-4. **无线通信**: 使用WiFi/BLE，无需额外引脚
-
 ## 开发建议
 
 1. **首次使用**: 建议从 `nsh` 配置开始，验证基本功能
@@ -239,7 +214,7 @@ configs/
 ## 注意事项
 
 1. 部分外设共用引脚，使用时需注意配置冲突
-2. UART2 (PA6/PA7) 是默认串口控制台，连接GD-Link虚拟串口
-3. SPI和I2C0共用PA2/PA3引脚，不能同时使用
-4. 启用SPI时，I2C0会自动切换到备用引脚PB0/PB1
-5. LED使用PC0/PC1/PC2，与其他外设无冲突
+2. LED (PA4/PA5/PA6) 与 QSPI Flash 共用引脚，不能同时使用
+3. USART_TX (PB15) 与 IR_OUT 共用引脚，需根据功能选择
+4. I2C0 (PA2/PA3) 可用于传感器连接
+5. LCD 使用独立的 SPI 接口 (PA9/PA10/PA11/PA12)，不与其他外设冲突
