@@ -1,0 +1,35 @@
+# ============================================================
+# .gitignore
+#
+# 忽略编译产物，避免把它们误提交到参赛仓。
+# 注意：logs/ 下最终导出的 AI Coding 日志必须提交，不要忽略！
+# ============================================================
+
+# Build artifacts
+build/
+out/
+*.o
+*.a
+*.elf
+*.hex
+*.map
+
+# Dependency files
+*.d
+.depend
+Make.dep
+
+# Config artifacts
+.config
+.config.old
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
