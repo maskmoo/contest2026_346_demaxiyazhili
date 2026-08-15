@@ -22,9 +22,25 @@
 
 comment "GD32VW55x Configuration Options"
 
+config ARCH_CHIP_GD32VW55X
+	bool "GigaDevice GD32VW55x"
+	select ARCH_RV32
+	select ARCH_RV_ISA_M
+	select ARCH_RV_ISA_A
+	select ARCH_RV_ISA_C
+	select ARCH_HAVE_FPU
+	select ARCH_HAVE_MISALIGN_EXCEPTION
+	select ONESHOT
+	select ONESHOT_COUNT
+	select ONESHOT_FAST_DIVISION
+	select ALARM_ARCH
+	---help---
+		GigaDevice GD32VW55x Wi-Fi/BLE SoC (Nuclei N307 rv32imafc,
+		ECLIC interrupt controller, 160 MHz, 320 KB SRAM).
+
 choice
 	prompt "GD32VW55x Chip Selection"
-	default ARCH_CHIP_GD32VW553KM
+	default ARCH_CHIP_GD32VW553HM
 	depends on ARCH_CHIP_GD32VW55X
 
 config ARCH_CHIP_GD32VW553KI
