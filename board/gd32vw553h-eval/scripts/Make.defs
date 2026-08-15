@@ -1,0 +1,14 @@
+############################################################################
+# boards/risc-v/gd32vw55x/gd32vw553h-eval/scripts/Make.defs
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+include $(TOPDIR)/Make.defs
+
+ARCHCSRCDIR = arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src$(DELIM)chip
+ARCHSRCDIR  = arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src
+
+# Linker script
+
+LDSCRIPT = $(BOARD_DIR)$(DELIM)scripts$(DELIM)ld.script

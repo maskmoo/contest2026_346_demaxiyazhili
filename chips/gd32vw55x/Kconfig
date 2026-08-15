@@ -1,0 +1,74 @@
+# ##############################################################################
+# chips/gd32vw55x/Kconfig
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+comment "GD32VW55x Configuration Options"
+
+choice
+	prompt "GD32VW55x Chip Selection"
+	default ARCH_CHIP_GD32VW553HM
+	depends on ARCH_CHIP_GD32VW55X
+
+config ARCH_CHIP_GD32VW553HI
+	bool "GD32VW553HIQ"
+	---help---
+		QFN40 package, 29 GPIO, 2048 KB flash, 320 KB SRAM.
+
+config ARCH_CHIP_GD32VW553HM
+	bool "GD32VW553HMQ"
+	---help---
+		QFN40 package, 29 GPIO, 4096 KB flash, 320 KB SRAM.
+
+config ARCH_CHIP_GD32VW553KI
+	bool "GD32VW553KIQ"
+	---help---
+		QFN32 package, 22 GPIO, 2048 KB flash, 320 KB SRAM.
+
+config ARCH_CHIP_GD32VW553KM
+	bool "GD32VW553KMQ"
+	---help---
+		QFN32 package, 22 GPIO, 4096 KB flash, 320 KB SRAM.
+
+endchoice
+
+menu "GD32VW55x Peripheral Support"
+
+config GD32VW55X_USART0
+	bool "USART0"
+	default n
+	select USART0_SERIALDRIVER
+
+config GD32VW55X_UART1
+	bool "UART1"
+	default n
+	select UART1_SERIALDRIVER
+
+config GD32VW55X_UART2
+	bool "UART2"
+	default n
+	select UART2_SERIALDRIVER
+
+config GD32VW55X_SPI
+	bool "SPI"
+	default n
+	select SPI
+
+config GD32VW55X_I2C0
+	bool "I2C0"
+	default n
+	select GD32VW55X_I2C
+	select I2C
+
+config GD32VW55X_I2C1
+	bool "I2C1"
+	default n
+	select GD32VW55X_I2C
+	select I2C
+
+config GD32VW55X_I2C
+	bool
+	default n
+
+endmenu

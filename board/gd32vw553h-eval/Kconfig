@@ -1,0 +1,13 @@
+#
+# boards/risc-v/gd32vw55x/gd32vw553h-eval/Kconfig
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if ARCH_BOARD_GD32VW553H_EVAL
+
+config ARCH_BOARD_GD32VW553H_EVAL_TAG
+	string "Board tag"
+	default "gd32vw553h-eval"
+
+endif # ARCH_BOARD_GD32VW553H_EVAL

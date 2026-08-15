@@ -1,0 +1,89 @@
+/****************************************************************************
+ * boards/risc-v/gd32vw55x/gd32vw553h-eval/scripts/ld.script
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * GD32VW553H-EVAL linker script.
+ *
+ * FLASH: 4096 KB total.  The top part is reserved for:
+ *   - Wi-Fi NVDS (20 KB) at 0x083fb000
+ *   - Progmem region (128 KB) at 0x083db000 (configurable)
+ * That leaves 3948 KB for firmware.
+ *
+ * SRAM: 288 KB + 32 KB shared SRAM.  First 0x200 bytes are boot ROM data.
+ * Top 32 KB reserved for Wi-Fi firmware RX buffers.
+ */
+
+MEMORY
+{
+  flash (rx) : ORIGIN = 0x08000000, LENGTH = 3948K
+  sram (rwx) : ORIGIN = 0x20000200, LENGTH = 288K - 0x200
+}
+
+OUTPUT_ARCH("riscv")
+
+ENTRY(_stext)
+SECTIONS
+{
+    .text : {
+        _stext = ABSOLUTE(.);
+        *(.text .text.*)
+        *(.fixup)
+        *(.gnu.warning)
+        *(.rodata .rodata.*)
+        *(.srodata .srodata.*)
+        *(.gnu.linkonce.t.*)
+        *(.glue_7)
+        *(.glue_7t)
+        *(.got)
+        *(.gcc_except_table)
+        *(.gnu.linkonce.r.*)
+        _etext = ABSOLUTE(.);
+    } > flash
+
+    .init_section : ALIGN(4) {
+        _sinit = ABSOLUTE(.);
+        KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
+        KEEP(*(.init_array EXCLUDE_FILE(*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o) .ctors))
+        _einit = ABSOLUTE(.);
+    } > flash
+
+    _eronly = ABSOLUTE(.);
+
+    .data : ALIGN(4) {
+        _sdata = ABSOLUTE(.);
+        *(.data .data.*)
+        *(.sdata .sdata.* .sdata2.*)
+        *(.gnu.linkonce.d.*)
+        *(.gnu.linkonce.s.*)
+        CONSTRUCTORS
+        . = ALIGN(4);
+        _edata = ABSOLUTE(.);
+    } > sram AT > flash
+
+    PROVIDE(__global_pointer$ = _sdata + ((_edata - _sdata) / 2));
+
+    .bss : ALIGN(4) {
+        _sbss = ABSOLUTE(.);
+        *(.bss .bss.*)
+        *(.sbss .sbss.*)
+        *(.gnu.linkonce.b.*)
+        *(.gnu.linkonce.sb.*)
+        *(COMMON)
+        . = ALIGN(32);
+        _ebss = ABSOLUTE(.);
+    } > sram
+
+    .stab 0 : { *(.stab) }
+    .stabstr 0 : { *(.stabstr) }
+    .stab.excl 0 : { *(.stab.excl) }
+    .stab.exclstr 0 : { *(.stab.exclstr) }
+    .stab.index 0 : { *(.stab.index) }
+    .stab.indexstr 0 : { *(.stab.indexstr) }
+    .comment 0 : { *(.comment) }
+    .debug_abbrev 0 : { *(.debug_abbrev) }
+    .debug_info 0 : { *(.debug_info) }
+    .debug_line 0 : { *(.debug_line) }
+    .debug_pubnames 0 : { *(.debug_pubnames) }
+    .debug_aranges 0 : { *(.debug_aranges) }
+}

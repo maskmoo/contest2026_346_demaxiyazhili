@@ -1,0 +1,24 @@
+############################################################################
+# chips/gd32vw55x/Make.defs
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+include chip/common/Make.defs
+
+HEAD_ASRC = gd32vw55x_head.S
+
+CHIP_CSRCS  = gd32vw55x_allocateheap.c gd32vw55x_clockconfig.c
+CHIP_CSRCS += gd32vw55x_irq.c gd32vw55x_irq_dispatch.c
+CHIP_CSRCS += gd32vw55x_lowputc.c gd32vw55x_serial.c
+CHIP_CSRCS += gd32vw55x_start.c gd32vw55x_timerisr.c
+
+CHIP_CSRCS += gd32vw55x_gpio.c
+
+ifeq ($(CONFIG_GD32VW55X_SPI),y)
+CHIP_CSRCS += gd32vw55x_spi.c
+endif
+
+ifeq ($(CONFIG_GD32VW55X_I2C),y)
+CHIP_CSRCS += gd32vw55x_i2c.c
+endif
