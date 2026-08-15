@@ -76,18 +76,46 @@
 #  define GPIO_I2C0_SDA  GPIO_I2C0_SDA_1   /* PA3, AF4 */
 #endif
 
-/* Note: I2C1 (PB12/PB13) conflicts with LCD_RESET/LCD_D/C, so it is not
- * available on this board when LCD is used.
+/* I2C1 (PB12/PB13) conflicts with LCD_RESET/LCD_D/C.
+ * Only available when LCD is disabled.
  */
 
-/* PWM.  The board bringup registers /dev/pwm0 on TIMER1.  Route its channel
- * 2 (TIMER1_CH2) to PB11 for IR output (AF1; TIMER1 lives on AF1).
+#ifdef CONFIG_BOARD_I2C1_ENABLE
+#  define GPIO_I2C1_SCL  GPIO_I2C1_SCL_4   /* PB12, AF6 */
+#  define GPIO_I2C1_SDA  GPIO_I2C1_SDA_4   /* PB13, AF6 */
+#endif
+
+/* LCD control signals.  PB12/PB13 are shared with I2C1.
+ * Only available when I2C1 is disabled.
+ */
+
+#ifdef CONFIG_BOARD_LCD_ENABLE
+#  define GPIO_LCD_RESET (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | \
+                          GPIO_CFG_PP | GPIO_CFG_SPEED_MAX | \
+                          GPIO_CFG_OUTPUT_SET | GPIO_CFG_PORT_B | \
+                          GPIO_CFG_PIN_12)
+#  define GPIO_LCD_DC    (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | \
+                          GPIO_CFG_PP | GPIO_CFG_SPEED_MAX | \
+                          GPIO_CFG_OUTPUT_RESET | GPIO_CFG_PORT_B | \
+                          GPIO_CFG_PIN_13)
+#endif
+
+/* PWM/IR output.  The board bringup registers /dev/pwm0 on TIMER1.
+ * Route its channel 2 (TIMER1_CH2) to PB11 for IR output (AF1; TIMER1
+ * lives on AF1).  IR output on PB15 is only available when USART console
+ * is disabled.
  */
 
 #ifdef CONFIG_GD32VW55X_PWM
 #  define GPIO_TIMER1_CH2OUT (GPIO_CFG_MODE_AF | GPIO_CFG_PUPD_NONE | \
                               GPIO_CFG_PP | GPIO_CFG_SPEED_MAX | \
                               GPIO_CFG_AF_1 | GPIO_CFG_PORT_B | GPIO_CFG_PIN_11)
+#endif
+
+#ifdef CONFIG_BOARD_IR_OUTPUT_ENABLE
+#  define GPIO_IR_OUT (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | \
+                       GPIO_CFG_PP | GPIO_CFG_SPEED_MAX | \
+                       GPIO_CFG_OUTPUT_RESET | GPIO_CFG_PORT_B | GPIO_CFG_PIN_15)
 #endif
 
 /* ADC.  Route ADC channel 0 (ADC_IN0) to PA1 on the board header so an
@@ -104,11 +132,14 @@
 /* The GD32VW553H-EVAL has three LEDs on GPIOA, driven push-pull and
  * active HIGH.
  *
- *   LED1  PA4
- *   LED2  PA5
- *   LED3  PA6
+ *   LED1  PA4 (shared with QSPI_SCK)
+ *   LED2  PA5 (shared with QSPI_NSS)
+ *   LED3  PA6 (shared with QSPI_IO0)
+ *
+ * LEDs are only available when BOARD_LED_ENABLE is set and QSPI is disabled.
  */
 
+#ifdef CONFIG_BOARD_LED_ENABLE
 #define GPIO_LED1 (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | GPIO_CFG_PP | \
                    GPIO_CFG_SPEED_MAX | GPIO_CFG_OUTPUT_RESET | \
                    GPIO_CFG_PORT_A | GPIO_CFG_PIN_4)
@@ -118,19 +149,24 @@
 #define GPIO_LED3 (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | GPIO_CFG_PP | \
                    GPIO_CFG_SPEED_MAX | GPIO_CFG_OUTPUT_RESET | \
                    GPIO_CFG_PORT_A | GPIO_CFG_PIN_6)
+#endif
 
 /* LED index values for use with board_userled() */
 
-#define BOARD_LED1        0
-#define BOARD_LED2        1
-#define BOARD_LED3        2
-#define BOARD_NLEDS       3
+#ifdef CONFIG_BOARD_LED_ENABLE
+#  define BOARD_LED1        0
+#  define BOARD_LED2        1
+#  define BOARD_LED3        2
+#  define BOARD_NLEDS       3
 
 /* LED bits for use with board_userled_all() */
 
-#define BOARD_LED1_BIT    (1 << BOARD_LED1)
-#define BOARD_LED2_BIT    (1 << BOARD_LED2)
-#define BOARD_LED3_BIT    (1 << BOARD_LED3)
+#  define BOARD_LED1_BIT    (1 << BOARD_LED1)
+#  define BOARD_LED2_BIT    (1 << BOARD_LED2)
+#  define BOARD_LED3_BIT    (1 << BOARD_LED3)
+#else
+#  define BOARD_NLEDS       0
+#endif
 
 /* If CONFIG_ARCH_LEDS is defined, the LEDs are used by the OS to signal
  * its state, and are not available to the application.  Otherwise they are

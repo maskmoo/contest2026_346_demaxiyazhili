@@ -20,5 +20,62 @@
 #
 # ##############################################################################
 
-if ARCH_BOARD_GD32VW553K_START
+if ARCH_BOARD_GD32VW553H_EVAL
+
+# Resource conflict: PA4/PA5/PA6 are shared between LED and QSPI Flash
+
+config BOARD_LED_ENABLE
+	bool "Enable LEDs"
+	default y if !GD32VW55X_QSPI
+	depends on !GD32VW55X_QSPI
+	---help---
+		Enable LED1/LED2/LED3 on PA4/PA5/PA6.
+		These pins are shared with QSPI Flash, so only one can be used.
+
+config BOARD_QSPI_FLASH_ENABLE
+	bool "Enable QSPI Flash"
+	default y if GD32VW55X_QSPI
+	depends on GD32VW55X_QSPI
+	---help---
+		Enable QSPI Flash on PA4-PA7/PB3/PB4.
+		PA4/PA5/PA6 are shared with LEDs, so LEDs will be disabled.
+
+# Resource conflict: PB15 is shared between USART_TX and IR_OUT
+
+config BOARD_USART_CONSOLE
+	bool "Use USART as console"
+	default y
+	---help---
+		Enable USART (PB15/PA8) as serial console.
+		PB15 is shared with IR_OUT, so only one can be used.
+
+config BOARD_IR_OUTPUT_ENABLE
+	bool "Enable IR output"
+	default n
+	depends on !BOARD_USART_CONSOLE
+	---help---
+		Enable IR output on PB15 using TIMER_CH2 (PB11).
+		PB15 is shared with USART_TX, so console must be disabled.
+
+# I2C0 uses PA2/PA3, no conflict
+# I2C1 uses PB12/PB13, conflicts with LCD
+
+config BOARD_LCD_ENABLE
+	bool "Enable LCD"
+	default y if !GD32VW55X_I2C1
+	depends on !GD32VW55X_I2C1
+	---help---
+		Enable LCD display using SPI (PA9-PA12) with
+		LCD_RESET (PB12) and LCD_D/C (PB13).
+		PB12/PB13 are shared with I2C1, so only one can be used.
+
+config BOARD_I2C1_ENABLE
+	bool "Enable I2C1"
+	default n
+	depends on !BOARD_LCD_ENABLE
+	---help---
+		Enable I2C1 on PB12/PB13.
+		These pins are shared with LCD control signals.
+		Note: I2C0 (PA2/PA3) is always available and has no conflicts.
+
 endif
