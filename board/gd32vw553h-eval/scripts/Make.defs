@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-include $(TOPDIR)/Make.defs
+include $(TOPDIR)/.config
+include $(TOPDIR)/tools/Config.mk
+include $(TOPDIR)/arch/risc-v/src/common/Toolchain.defs
 
 ARCHCSRCDIR = arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src$(DELIM)chip
 ARCHSRCDIR  = arch$(DELIM)$(CONFIG_ARCH)$(DELIM)src
