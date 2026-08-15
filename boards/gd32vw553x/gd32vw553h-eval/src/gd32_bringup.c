@@ -103,10 +103,10 @@ int gd32_bringup(void)
 #ifdef CONFIG_GD32VW55X_ADC
   static const uint8_t chanlist[1] =
   {
-#ifdef GPIO_ADC_IN8
-    8   /* ADC_IN8 (PB0) on J1, routed by the adc example */
+#ifdef GPIO_ADC_IN0
+    0   /* ADC_IN0 (PA1) on board header, routed by the adc example */
 #else
-    0   /* ADC_IN0 (PA0); no analog pin routed, registers the device only */
+    0   /* ADC_IN0; no analog pin routed, registers the device only */
 #endif
   };
 
@@ -200,8 +200,8 @@ int gd32_bringup(void)
 
 #ifdef CONFIG_MMCSD_SPI
       /* Bind SPI0 to the MMC/SD SPI slot (/dev/mmcsd0) and mount it as FAT.
-       * The SD card is wired to SPI0 (SCK PA2, MISO PA1, MOSI PA0) with the
-       * chip select on PA4 -- all on the J1 header.
+       * The SD card is wired to SPI0 (SCK PA11, MISO PA10, MOSI PA9) with the
+       * chip select on PA12.
        */
 
       ret = mmcsd_spislotinitialize(0, 0, spi);

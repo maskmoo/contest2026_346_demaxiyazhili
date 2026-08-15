@@ -20,8 +20,8 @@
  *
  ****************************************************************************/
 
-#ifndef __BOARDS_RISCV_GD32VW55X_GD32VW553K_START_INCLUDE_BOARD_H
-#define __BOARDS_RISCV_GD32VW55X_GD32VW553K_START_INCLUDE_BOARD_H
+#ifndef __BOARDS_RISCV_GD32VW55X_GD32VW553H_EVAL_INCLUDE_BOARD_H
+#define __BOARDS_RISCV_GD32VW55X_GD32VW553H_EVAL_INCLUDE_BOARD_H
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -35,119 +35,89 @@
 #define BOARD_IRC32K_FREQUENCY  32000     /* Internal 32 kHz RC (FWDGT, RTC) */
 #define BOARD_SYSCLK_FREQUENCY  160000000
 
-/* UART pin muxing.  The GD32VW553K-START wires UART2 (PA6/PA7) to the
- * on-board GD-Link virtual COM port.  Pin/AF assignments follow the
- * vendor SDK (plf/src/uart/uart.h, ASIC boards).
+/* UART pin muxing.  The GD32VW553H-EVAL wires USART (PB15/PA8) to the
+ * on-board debug connector.  Pin/AF assignments follow the vendor SDK.
  */
 
-#define BOARD_UART2_TX_GPIO     GD32VW55X_GPIOA_BASE
-#define BOARD_UART2_TX_PIN      6
-#define BOARD_UART2_TX_AF       10
-#define BOARD_UART2_RX_GPIO     GD32VW55X_GPIOA_BASE
-#define BOARD_UART2_RX_PIN      7
-#define BOARD_UART2_RX_AF       8
-
-#define BOARD_UART1_TX_GPIO     GD32VW55X_GPIOB_BASE
-#define BOARD_UART1_TX_PIN      15
-#define BOARD_UART1_TX_AF       7
-#define BOARD_UART1_RX_GPIO     GD32VW55X_GPIOA_BASE
-#define BOARD_UART1_RX_PIN      8
-#define BOARD_UART1_RX_AF       3
-
-#define BOARD_USART0_TX_GPIO    GD32VW55X_GPIOA_BASE
-#define BOARD_USART0_TX_PIN     0
-#define BOARD_USART0_TX_AF      0
-#define BOARD_USART0_RX_GPIO    GD32VW55X_GPIOA_BASE
-#define BOARD_USART0_RX_PIN     1
-#define BOARD_USART0_RX_AF      0
+#define BOARD_USART_TX_GPIO     GD32VW55X_GPIOB_BASE
+#define BOARD_USART_TX_PIN      15
+#define BOARD_USART_TX_AF       7
+#define BOARD_USART_RX_GPIO     GD32VW55X_GPIOA_BASE
+#define BOARD_USART_RX_PIN      8
+#define BOARD_USART_RX_AF       3
 
 /* Peripheral pin selection *************************************************/
 
 /* The pin options come from arch/risc-v/src/gd32vw55x/hardware/
- * gd32vw55x_pinmap.h.  Avoid PA6/PA7: they are the UART2 console.
+ * gd32vw55x_pinmap.h.
  */
 
 #ifdef CONFIG_GD32VW55X_SPI
-#  define GPIO_SPI_SCK   GPIO_SPI_SCK_1    /* PA2, AF5 */
-#  define GPIO_SPI_MISO  GPIO_SPI_MISO_1   /* PA1, AF5 */
-#  define GPIO_SPI_MOSI  GPIO_SPI_MOSI_1   /* PA0, AF5 */
+#  define GPIO_SPI_SCK   GPIO_SPI_SCK_2    /* PA11, AF5 */
+#  define GPIO_SPI_MISO  GPIO_SPI_MISO_2   /* PA10, AF5 */
+#  define GPIO_SPI_MOSI  GPIO_SPI_MOSI_2   /* PA9, AF5 */
 
-/* SPI0 chip select for the SD card: a plain GPIO output on PA4 (J1),
+/* SPI chip select for LCD: a plain GPIO output on PA12,
  * driven by gd32_spi0select().  Active low, idles high.
  */
 
 #  define GPIO_SPI0_CSPIN (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | \
                            GPIO_CFG_PP | GPIO_CFG_SPEED_MAX | \
                            GPIO_CFG_OUTPUT_SET | GPIO_CFG_PORT_A | \
-                           GPIO_CFG_PIN_4)
+                           GPIO_CFG_PIN_12)
 #endif
 
-/* I2C0 uses PA2 (SCL) / PA3 (SDA) on AF4, the pins broken out on the J1
- * header (datasheet Table 2-5), so a sensor such as the SHT3x can be wired
- * there directly.  When SPI is enabled it claims PA2 (SPI SCK), so I2C0
- * falls back to PB0/PB1 (AF6); PB1 (SDA) is not broken out on J1/J2, so that
- * pairing only registers the bus (the periph case).
+/* I2C0 uses PA2 (SCL) / PA3 (SDA) on AF4, so a sensor such as the SHT3x
+ * can be wired there directly.
  */
 
 #ifdef CONFIG_GD32VW55X_I2C0
-#  ifdef CONFIG_GD32VW55X_SPI
-#    define GPIO_I2C0_SCL  GPIO_I2C0_SCL_3   /* PB0, AF6 */
-#    define GPIO_I2C0_SDA  GPIO_I2C0_SDA_3   /* PB1, AF6 (not on a header) */
-#  else
-#    define GPIO_I2C0_SCL  GPIO_I2C0_SCL_1   /* PA2, AF4 (J1) */
-#    define GPIO_I2C0_SDA  GPIO_I2C0_SDA_1   /* PA3, AF4 (J1) */
-#  endif
+#  define GPIO_I2C0_SCL  GPIO_I2C0_SCL_1   /* PA2, AF4 */
+#  define GPIO_I2C0_SDA  GPIO_I2C0_SDA_1   /* PA3, AF4 */
 #endif
 
-#ifdef CONFIG_GD32VW55X_I2C1
-#  define GPIO_I2C1_SCL  GPIO_I2C1_SCL_4   /* PB12, AF6 */
-#  define GPIO_I2C1_SDA  GPIO_I2C1_SDA_4   /* PB13, AF6 */
-#endif
+/* Note: I2C1 (PB12/PB13) conflicts with LCD_RESET/LCD_D/C, so it is not
+ * available on this board when LCD is used.
+ */
 
 /* PWM.  The board bringup registers /dev/pwm0 on TIMER1.  Route its channel
- * 0 (TIMER1_CH0) to PA0 on the J1 header (AF1; TIMER1 lives on AF1) so the
- * output can be probed there.  The other channels stay unrouted.
+ * 2 (TIMER1_CH2) to PB11 for IR output (AF1; TIMER1 lives on AF1).
  */
 
 #ifdef CONFIG_GD32VW55X_PWM
-#  define GPIO_TIMER1_CH0OUT (GPIO_CFG_MODE_AF | GPIO_CFG_PUPD_NONE | \
+#  define GPIO_TIMER1_CH2OUT (GPIO_CFG_MODE_AF | GPIO_CFG_PUPD_NONE | \
                               GPIO_CFG_PP | GPIO_CFG_SPEED_MAX | \
-                              GPIO_CFG_AF_1 | GPIO_CFG_PORT_A | GPIO_CFG_PIN_0)
+                              GPIO_CFG_AF_1 | GPIO_CFG_PORT_B | GPIO_CFG_PIN_11)
 #endif
 
-/* ADC.  Route ADC channel 8 (ADC_IN8) to PB0 on the J1 header (datasheet
- * Table 2-5) so an analog signal can be applied there.  When SPI is enabled
- * PB0 is instead claimed by the I2C0 fallback (see above), so the analog pin
- * is only routed when SPI is off.  The board bringup samples this channel
- * when the macro is defined.
+/* ADC.  Route ADC channel 0 (ADC_IN0) to PA1 on the board header so an
+ * analog signal can be applied there.
  */
 
-#if defined(CONFIG_GD32VW55X_ADC) && !defined(CONFIG_GD32VW55X_SPI)
-#  define GPIO_ADC_IN8 (GPIO_CFG_MODE_ANALOG | GPIO_CFG_PUPD_NONE | \
-                        GPIO_CFG_PORT_B | GPIO_CFG_PIN_0)
+#ifdef CONFIG_GD32VW55X_ADC
+#  define GPIO_ADC_IN0 (GPIO_CFG_MODE_ANALOG | GPIO_CFG_PUPD_NONE | \
+                        GPIO_CFG_PORT_A | GPIO_CFG_PIN_1)
 #endif
 
 /* LEDs *********************************************************************/
 
-/* The GD32VW553K-START has three LEDs on GPIOC, driven push-pull and
- * active HIGH (the vendor demo turns them on with gpio_bit_set(); see
- * MSDK/plf/src/gd32vw55x_platform.h, where they are named LED_RUN,
- * LED_SLEEP and LED_RX).
+/* The GD32VW553H-EVAL has three LEDs on GPIOA, driven push-pull and
+ * active HIGH.
  *
- *   LED1  PC0
- *   LED2  PC1
- *   LED3  PC2
+ *   LED1  PA4
+ *   LED2  PA5
+ *   LED3  PA6
  */
 
 #define GPIO_LED1 (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | GPIO_CFG_PP | \
                    GPIO_CFG_SPEED_MAX | GPIO_CFG_OUTPUT_RESET | \
-                   GPIO_CFG_PORT_C | GPIO_CFG_PIN_0)
+                   GPIO_CFG_PORT_A | GPIO_CFG_PIN_4)
 #define GPIO_LED2 (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | GPIO_CFG_PP | \
                    GPIO_CFG_SPEED_MAX | GPIO_CFG_OUTPUT_RESET | \
-                   GPIO_CFG_PORT_C | GPIO_CFG_PIN_1)
+                   GPIO_CFG_PORT_A | GPIO_CFG_PIN_5)
 #define GPIO_LED3 (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | GPIO_CFG_PP | \
                    GPIO_CFG_SPEED_MAX | GPIO_CFG_OUTPUT_RESET | \
-                   GPIO_CFG_PORT_C | GPIO_CFG_PIN_2)
+                   GPIO_CFG_PORT_A | GPIO_CFG_PIN_6)
 
 /* LED index values for use with board_userled() */
 
@@ -179,4 +149,4 @@
 #define LED_ASSERTION     6  /* An assertion failed     N/C  N/C   ON  */
 #define LED_PANIC         7  /* The system has crashed  N/C  N/C   BLINK */
 
-#endif /* __BOARDS_RISCV_GD32VW55X_GD32VW553K_START_INCLUDE_BOARD_H */
+#endif /* __BOARDS_RISCV_GD32VW55X_GD32VW553H_EVAL_INCLUDE_BOARD_H */
