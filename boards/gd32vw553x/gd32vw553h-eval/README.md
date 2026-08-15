@@ -13,11 +13,11 @@ GD32VW553H-EVAL 是基于 GD32VW553H 微控制器的评估板，集成了 WiFi �
 
 ### 通信接口
 
-#### USART
+#### USART0
 | 接口 | 引脚 | 功能 | 说明 |
 |------|------|------|------|
-| USART_TX | PB15 | 发送 | 串口控制台 |
-| USART_RX | PA8 | 接收 | 串口控制台 |
+| USART0_TX | PB15 | 发送 | 串口控制台 |
+| USART0_RX | PA8 | 接收 | 串口控制台 |
 
 #### I2C
 | 接口 | 引脚 | 功能 | 说明 |
@@ -78,7 +78,7 @@ GD32VW553H-EVAL 是基于 GD32VW553H 微控制器的评估板，集成了 WiFi �
 #### IRFP
 | 信号 | 引脚 | 说明 |
 |------|------|------|
-| IR_OUT | PB15 | 红外输出 (与USART_TX共用) |
+| IR_OUT | PB15 | 红外输出 (与USART0_TX共用) |
 | TIMER_CH2 | PB11 | 定时器通道 |
 
 ## 引脚复用说明
@@ -90,7 +90,7 @@ GD32VW553H-EVAL 是基于 GD32VW553H 微控制器的评估板，集成了 WiFi �
 | PA4 | LED1 | QSPI_SCK | BOARD_LED_ENABLE / GD32VW55X_QSPI |
 | PA5 | LED2 | QSPI_NSS | BOARD_LED_ENABLE / GD32VW55X_QSPI |
 | PA6 | LED3 | QSPI_IO0 | BOARD_LED_ENABLE / GD32VW55X_QSPI |
-| PB15 | USART_TX | IR_OUT | BOARD_USART_CONSOLE / BOARD_IR_OUTPUT_ENABLE |
+| PB15 | USART0_TX | IR_OUT | BOARD_USART0_CONSOLE / BOARD_IR_OUTPUT_ENABLE |
 | PB12 | LCD_RESET | I2C1_SCL | BOARD_LCD_ENABLE / BOARD_I2C1_ENABLE |
 | PB13 | LCD_D/C | I2C1_SDA | BOARD_LCD_ENABLE / BOARD_I2C1_ENABLE |
 
@@ -111,7 +111,7 @@ CONFIG_GD32VW55X_QSPI=y
 #### USART 与 IR 输出冲突
 ```kconfig
 # 启用 USART 控制台（禁用 IR 输出）
-CONFIG_BOARD_USART_CONSOLE=y
+CONFIG_BOARD_USART0_CONSOLE=y
 
 # 启用 IR 输出（禁用 USART 控制台）
 CONFIG_BOARD_IR_OUTPUT_ENABLE=y
@@ -130,7 +130,7 @@ CONFIG_BOARD_I2C1_ENABLE=y
 
 ### 推荐配置
 
-1. **基础串口调试**: 使用USART (PB15/PA8)，启用 `BOARD_USART_CONSOLE`
+1. **基础串口调试**: 使用USART (PB15/PA8)，启用 `BOARD_USART0_CONSOLE`
 2. **LED控制**: 使用PA4/PA5/PA6，启用 `BOARD_LED_ENABLE`，禁用 QSPI
 3. **QSPI Flash**: 使用PA4-PA7/PB3/PB4，启用 `GD32VW55X_QSPI`，禁用 LED
 4. **LCD显示**: 使用SPI (PA9-PA12) + LCD控制 (PB12/PB13)，启用 `BOARD_LCD_ENABLE`
@@ -247,6 +247,6 @@ configs/
 
 1. 部分外设共用引脚，使用时需注意配置冲突
 2. LED (PA4/PA5/PA6) 与 QSPI Flash 共用引脚，不能同时使用
-3. USART_TX (PB15) 与 IR_OUT 共用引脚，需根据功能选择
+3. USART0_TX (PB15) 与 IR_OUT 共用引脚，需根据功能选择
 4. I2C0 (PA2/PA3) 可用于传感器连接
 5. LCD 使用独立的 SPI 接口 (PA9/PA10/PA11/PA12)，不与其他外设冲突

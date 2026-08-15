@@ -35,16 +35,19 @@
 #define BOARD_IRC32K_FREQUENCY  32000     /* Internal 32 kHz RC (FWDGT, RTC) */
 #define BOARD_SYSCLK_FREQUENCY  160000000
 
-/* USART pin muxing.  The GD32VW553H-EVAL wires USART (PB15/PA8) to the
+/* USART0 pin muxing.  The GD32VW553H-EVAL wires USART0 (PB15/PA8) to the
  * on-board debug connector.  Pin/AF assignments follow the vendor SDK.
+ *
+ * PB15: USART0_TX = AF8
+ * PA8:  USART0_RX = AF2
  */
 
-#define BOARD_USART_TX_GPIO     GD32VW55X_GPIOB_BASE
-#define BOARD_USART_TX_PIN      15
-#define BOARD_USART_TX_AF       7
-#define BOARD_USART_RX_GPIO     GD32VW55X_GPIOA_BASE
-#define BOARD_USART_RX_PIN      8
-#define BOARD_USART_RX_AF       3
+#define BOARD_USART0_TX_GPIO    GD32VW55X_GPIOB_BASE
+#define BOARD_USART0_TX_PIN     15
+#define BOARD_USART0_TX_AF      8   /* GPIO_AF_8 */
+#define BOARD_USART0_RX_GPIO    GD32VW55X_GPIOA_BASE
+#define BOARD_USART0_RX_PIN     8
+#define BOARD_USART0_RX_AF      2   /* GPIO_AF_2 */
 
 /* Peripheral pin selection *************************************************/
 
