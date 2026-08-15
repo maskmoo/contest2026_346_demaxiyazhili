@@ -17,7 +17,7 @@
 #include "gd32vw55x.h"
 #include "gd32vw55x_clockconfig.h"
 #include "gd32vw55x_lowputc.h"
-#include "include/chip.h"
+#include "chip.h"
 
 /****************************************************************************
  * Pre-processor Definitions

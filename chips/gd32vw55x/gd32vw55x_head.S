@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 #include <nuttx/config.h>
-#include "include/chip.h"
+#include "chip.h"
 #include "gd32vw55x_memorymap.h"
 #include "hardware/gd32vw55x_eclic.h"
 #include "riscv_internal.h"
