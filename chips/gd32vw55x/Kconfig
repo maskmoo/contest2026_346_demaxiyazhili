@@ -40,7 +40,7 @@ config ARCH_CHIP_GD32VW55X
 
 choice
 	prompt "GD32VW55x Chip Selection"
-	default ARCH_CHIP_GD32VW553KM
+	default ARCH_CHIP_GD32VW553HM
 	depends on ARCH_CHIP_GD32VW55X
 
 config ARCH_CHIP_GD32VW553KI
