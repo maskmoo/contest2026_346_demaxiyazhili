@@ -5,6 +5,7 @@
 # You can then do "make savedefconfig" to generate a new defconfig file that includes your
 # modifications.
 #
+#include "../common/defconfig"
 # CONFIG_ARCH_LEDS is not set
 CONFIG_ARCH="risc-v"
 CONFIG_ARCH_BOARD="gd32vw553h-eval"
