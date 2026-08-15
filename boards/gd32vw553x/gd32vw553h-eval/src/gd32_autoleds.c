@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/risc-v/gd32vw55x/gd32vw553h-eval/src/gd32_autoleds.c
+ * boards/risc-v/gd32vw55x/gd32vw553k-start/src/gd32_autoleds.c
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,7 +33,7 @@
 #include <arch/board/board.h>
 
 #include "gd32vw55x_gpio.h"
-#include "gd32vw553h-eval.h"
+#include "gd32vw553k-start.h"
 
 #ifdef CONFIG_ARCH_LEDS
 

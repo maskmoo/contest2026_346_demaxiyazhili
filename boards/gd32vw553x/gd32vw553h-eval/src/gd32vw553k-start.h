@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/risc-v/gd32vw55x/gd32vw553k-start/src/gd32_boot.c
+ * boards/risc-v/gd32vw55x/gd32vw553k-start/src/gd32vw553k-start.h
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,54 +20,33 @@
  *
  ****************************************************************************/
 
-/****************************************************************************
- * Included Files
- ****************************************************************************/
-
-#include <nuttx/config.h>
-
-#include <debug.h>
-
-#include <nuttx/board.h>
-#include <arch/board/board.h>
-
-#include "gd32vw55x.h"
-#include "gd32vw553k-start.h"
+#ifndef __BOARDS_RISCV_GD32VW55X_GD32VW553K_START_SRC_GD32VW553K_START_H
+#define __BOARDS_RISCV_GD32VW55X_GD32VW553K_START_SRC_GD32VW553K_START_H
 
 /****************************************************************************
- * Public Functions
+ * Public Function Prototypes
  ****************************************************************************/
 
 /****************************************************************************
- * Name: gd32vw55x_boardinitialize
+ * Name: gd32_bringup
  *
  * Description:
- *   All GD32VW55x architectures must provide the following entry point.
- *   This entry point is called early in the initialization -- after all
- *   memory has been configured and mapped but before any devices have
- *   been initialized.
+ *   Perform architecture-specific initialization
  *
  ****************************************************************************/
 
-void gd32vw55x_boardinitialize(void)
-{
-}
+int gd32_bringup(void);
 
 /****************************************************************************
- * Name: board_late_initialize
+ * Name: gd32_spidev_initialize
  *
  * Description:
- *   If CONFIG_BOARD_LATE_INITIALIZE is selected, then an additional
- *   initialization call will be performed in the boot-up sequence to a
- *   function called board_late_initialize().  board_late_initialize()
- *   will be called after up_initialize() is called and just before the
- *   initial application is started.
+ *   Configure the SPI chip select GPIO(s) used by the board.
  *
  ****************************************************************************/
 
-#ifdef CONFIG_BOARD_LATE_INITIALIZE
-void board_late_initialize(void)
-{
-  gd32_bringup();
-}
+#ifdef CONFIG_GD32VW55X_SPI
+void gd32_spidev_initialize(void);
 #endif
+
+#endif /* __BOARDS_RISCV_GD32VW55X_GD32VW553K_START_SRC_GD32VW553K_START_H */

@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/risc-v/gd32vw55x/gd32vw553h-eval/src/gd32_reset.c
+ * boards/risc-v/gd32vw55x/gd32vw553k-start/src/gd32_reset.c
  *
  * SPDX-License-Identifier: Apache-2.0
  *

@@ -1,5 +1,5 @@
 ############################################################################
-# boards/risc-v/gd32vw55x/gd32vw553h-eval/src/Makefile
+# boards/risc-v/gd32vw55x/gd32vw553k-start/src/Makefile
 #
 # SPDX-License-Identifier: Apache-2.0
 #

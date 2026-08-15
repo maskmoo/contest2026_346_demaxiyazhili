@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/risc-v/gd32vw55x/gd32vw553h-eval/src/gd32_appinit.c
+ * boards/risc-v/gd32vw55x/gd32vw553k-start/src/gd32_appinit.c
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -30,7 +30,7 @@
 
 #include <nuttx/board.h>
 
-#include "gd32vw553h-eval.h"
+#include "gd32vw553k-start.h"
 
 /****************************************************************************
  * Public Functions
