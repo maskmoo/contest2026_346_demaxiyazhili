@@ -35,7 +35,7 @@
 #define BOARD_IRC32K_FREQUENCY  32000     /* Internal 32 kHz RC (FWDGT, RTC) */
 #define BOARD_SYSCLK_FREQUENCY  160000000
 
-/* UART pin muxing.  The GD32VW553H-EVAL wires USART (PB15/PA8) to the
+/* USART pin muxing.  The GD32VW553H-EVAL wires USART (PB15/PA8) to the
  * on-board debug connector.  Pin/AF assignments follow the vendor SDK.
  */
 
