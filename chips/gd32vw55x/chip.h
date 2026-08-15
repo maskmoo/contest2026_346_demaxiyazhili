@@ -1,5 +1,5 @@
 /****************************************************************************
- * arch/risc-v/src/gd32vw55x/chip.h
+ * arch/risc-v/include/gd32vw55x/chip.h
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,18 +20,42 @@
  *
  ****************************************************************************/
 
-#ifndef __ARCH_RISCV_SRC_GD32VW55X_CHIP_H
-#define __ARCH_RISCV_SRC_GD32VW55X_CHIP_H
+#ifndef __ARCH_RISCV_INCLUDE_GD32VW55X_CHIP_H
+#define __ARCH_RISCV_INCLUDE_GD32VW55X_CHIP_H
 
 /****************************************************************************
- * Included Files
+ * Pre-processor Definitions
  ****************************************************************************/
 
-/* Include the chip capabilities file */
+/* GD32VW553 family: Nuclei N307 (rv32imafc + B + P), ECLIC, 160 MHz.
+ * All family members share the same 320 KB SRAM and peripheral set.
+ * Variants differ only in flash size and package/GPIO count:
+ *
+ *   GD32VW553KI - QFN32, 22 GPIO, 2048 KB flash
+ *   GD32VW553KM - QFN32, 22 GPIO, 4096 KB flash
+ *   GD32VW553HI - QFN40, 29 GPIO, 2048 KB flash
+ *   GD32VW553HM - QFN40, 29 GPIO, 4096 KB flash
+ */
 
-#include <arch/chip/chip.h>
+#if defined(CONFIG_ARCH_CHIP_GD32VW553KI)
+#  define GD32VW55X_FLASH_SIZE          (2048 * 1024)
+#  define GD32VW55X_NGPIO               22
+#elif defined(CONFIG_ARCH_CHIP_GD32VW553KM)
+#  define GD32VW55X_FLASH_SIZE          (4096 * 1024)
+#  define GD32VW55X_NGPIO               22
+#elif defined(CONFIG_ARCH_CHIP_GD32VW553HI)
+#  define GD32VW55X_FLASH_SIZE          (2048 * 1024)
+#  define GD32VW55X_NGPIO               29
+#elif defined(CONFIG_ARCH_CHIP_GD32VW553HM)
+#  define GD32VW55X_FLASH_SIZE          (4096 * 1024)
+#  define GD32VW55X_NGPIO               29
+#else
+#  error "Unknown GD32VW55x chip variant"
+#endif
 
-#include "gd32vw55x_memorymap.h"
-#include "hardware/gd32vw55x_pinmap.h"
+/* SRAM: 288 KB application + 32 KB shared (top, used by Wi-Fi RX) */
 
-#endif /* __ARCH_RISCV_SRC_GD32VW55X_CHIP_H */
+#define GD32VW55X_SRAM_SIZE             (320 * 1024)
+#define GD32VW55X_APP_SRAM_SIZE         (288 * 1024)
+
+#endif /* __ARCH_RISCV_INCLUDE_GD32VW55X_CHIP_H */

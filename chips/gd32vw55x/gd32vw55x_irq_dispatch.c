@@ -33,6 +33,7 @@
 #include <nuttx/arch.h>
 
 #include "riscv_internal.h"
+#include "hardware/gd32vw55x_eclic.h"
 #include "chip.h"
 
 /****************************************************************************
