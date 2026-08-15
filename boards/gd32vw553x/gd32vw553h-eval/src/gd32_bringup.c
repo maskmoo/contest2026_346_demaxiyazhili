@@ -1,5 +1,5 @@
 /****************************************************************************
- * boards/risc-v/gd32vw55x/gd32vw553k-start/src/gd32_bringup.c
+ * boards/risc-v/gd32vw55x/gd32vw553h-eval/src/gd32_bringup.c
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -69,7 +69,7 @@
 
 #include <arch/board/board.h>
 
-#include "gd32vw553k-start.h"
+#include "gd32vw553h-eval.h"
 
 #ifdef CONFIG_GD32VW55X_WIFI
 /* Brings the radio up at boot and registers wlan0 -- same pattern as the
