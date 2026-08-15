@@ -13,7 +13,7 @@
 #include <nuttx/arch.h>
 #include "riscv_internal.h"
 #include "gd32vw55x_clockconfig.h"
-#include "chip.h"
+#include "include/chip.h"
 
 /****************************************************************************
  * Pre-processor Definitions

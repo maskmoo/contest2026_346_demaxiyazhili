@@ -18,7 +18,7 @@
 #include "hardware/gd32vw55x_rcu.h"
 #include "hardware/gd32vw55x_gpio.h"
 #include "hardware/gd32vw55x_uart.h"
-#include "chip.h"
+#include "include/chip.h"
 
 /****************************************************************************
  * Pre-processor Definitions

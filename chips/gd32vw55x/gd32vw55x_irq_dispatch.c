@@ -13,7 +13,7 @@
 #include <nuttx/irq.h>
 #include "riscv_internal.h"
 #include "hardware/gd32vw55x_eclic.h"
-#include "chip.h"
+#include "include/chip.h"
 
 /****************************************************************************
  * Public Functions
