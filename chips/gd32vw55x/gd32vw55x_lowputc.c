@@ -179,10 +179,10 @@ void gd32vw55x_lowsetup(void)
 
 #ifdef CONFIG_GD32VW55X_UART2
   modifyreg32(GD32VW55X_RCU_APB2EN, 0, RCU_APB2EN_UART2EN);
-  gd32vw55x_gpio_config_af(BOARD_UART2_TX_GPIO, BOARD_UART2_TX_PIN,
-                           BOARD_UART2_TX_AF, GPIO_PUD_PULLUP);
-  gd32vw55x_gpio_config_af(BOARD_UART2_RX_GPIO, BOARD_UART2_RX_PIN,
-                           BOARD_UART2_RX_AF, GPIO_PUD_PULLUP);
+  gd32vw55x_gpio_config_af(BOARD_USART_TX_GPIO, BOARD_USART_TX_PIN,
+                           BOARD_USART_TX_AF, GPIO_PUD_PULLUP);
+  gd32vw55x_gpio_config_af(BOARD_USART_RX_GPIO, BOARD_USART_RX_PIN,
+                           BOARD_USART_RX_AF, GPIO_PUD_PULLUP);
 #endif
 
 #ifdef HAVE_SERIAL_CONSOLE
