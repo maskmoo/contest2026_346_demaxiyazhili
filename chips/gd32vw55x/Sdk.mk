@@ -46,37 +46,38 @@ ifndef GDWIFI_SDK_VERSION
 	GDWIFI_SDK_VERSION = 945c6e28754f1bbdefb8bcd3049593fae8873bd5
 endif
 
-GDWIFI_PATCHES = $(abspath $(ARCH_SRCDIR)$(DELIM)gd32vw55x$(DELIM)gdwifi$(DELIM)patches$(DELIM)0001-nuttx-port.patch)
+GDWIFI_PATCHES = $(abspath $(dir $(MAKEFILE_LIST))$(DELIM)gdwifi$(DELIM)patches$(DELIM)0001-nuttx-port.patch)
 
 GDWIFI_SDK := $(patsubst "%",%,$(CONFIG_GD32VW55X_WIFI_SDK_PATH))
 
 ifeq ($(GDWIFI_SDK),)
 
-GDWIFI_SDK = $(ARCH_SRCDIR)$(DELIM)gd32vw55x$(DELIM)$(GDWIFI_SDK_REPO)
+GDWIFI_SDK = $(abspath $(dir $(MAKEFILE_LIST))$(DELIM)$(GDWIFI_SDK_REPO))
 
-chip/$(GDWIFI_SDK_REPO):
+$(GDWIFI_SDK):
 	$(Q) echo "Cloning GigaDevice GD32VW55x Wi-Fi/BLE SDK"
-	$(Q) $(call CLONE, $(GDWIFI_SDK_URL),chip/$(GDWIFI_SDK_REPO))
+	$(Q) $(call CLONE, $(GDWIFI_SDK_URL),$(GDWIFI_SDK))
 	$(Q) echo "GD32VW55x SDK: ${GDWIFI_SDK_VERSION}"
-	$(Q) git -C chip/$(GDWIFI_SDK_REPO) checkout --quiet $(GDWIFI_SDK_VERSION)
+	$(Q) git -C $(GDWIFI_SDK) checkout --quiet $(GDWIFI_SDK_VERSION)
 	$(Q) echo "Applying NuttX port patches"
-	$(Q) git -C chip/$(GDWIFI_SDK_REPO) apply $(GDWIFI_PATCHES)
+	$(Q) git -C $(GDWIFI_SDK) apply $(GDWIFI_PATCHES)
 
-context:: chip/$(GDWIFI_SDK_REPO)
+context:: $(GDWIFI_SDK)
 
 distclean::
-	$(call DELDIR, chip/$(GDWIFI_SDK_REPO))
+	$(call DELDIR, $(GDWIFI_SDK))
 
 endif
 
 # Expose the SDK under chip/sdk so the source paths stay in-tree relative
 
-GDWIFI_LINK := $(shell ln -sfn $(GDWIFI_SDK) $(ARCH_SRCDIR)$(DELIM)gd32vw55x$(DELIM)sdk)
+CHIP_DIR := $(abspath $(dir $(MAKEFILE_LIST)))
+GDWIFI_LINK := $(shell ln -sfn $(GDWIFI_SDK) $(CHIP_DIR)$(DELIM)sdk)
 
 SDKDIR = chip$(DELIM)sdk
 MSDK   = $(SDKDIR)$(DELIM)MSDK
 
 # The mask ROM API (rom_api.h): needed by PROGMEM, and by the radio
 
-INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)$(SDKDIR)$(DELIM)ROM-EXPORT$(DELIM)bootloader
-INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)$(SDKDIR)$(DELIM)ROM-EXPORT$(DELIM)halcomm
+INCLUDES += $(INCDIR_PREFIX)$(GDWIFI_SDK)$(DELIM)ROM-EXPORT$(DELIM)bootloader
+INCLUDES += $(INCDIR_PREFIX)$(GDWIFI_SDK)$(DELIM)ROM-EXPORT$(DELIM)halcomm
