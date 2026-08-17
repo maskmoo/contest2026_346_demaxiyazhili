@@ -33,6 +33,7 @@
 #include <debug.h>
 
 #include <nuttx/irq.h>
+#include <nuttx/spinlock.h>
 #include <nuttx/arch.h>
 #include <nuttx/timers/pwm.h>
 #include <arch/board/board.h>
@@ -553,7 +554,11 @@ static int pwm_timer(struct gd32_pwmtimer_s *priv,
 
   /* Configure the requested channels */
 
+#ifdef CONFIG_PWM_MULTICHAN
   for (i = 0; i < CONFIG_PWM_NCHANNELS; i++)
+#else
+  for (i = 0; i < 1; i++)
+#endif
     {
       struct gd32_pwmchan_s *chan = NULL;
       uint32_t chctl;
@@ -562,9 +567,8 @@ static int pwm_timer(struct gd32_pwmtimer_s *priv,
       int8_t   channel;
       int      index;
 
-      duty = info->channels[i].duty;
-
 #ifdef CONFIG_PWM_MULTICHAN
+      duty = info->channels[i].duty;
       channel = info->channels[i].channel;
 
       /* A channel number of zero or less terminates the list */
@@ -578,6 +582,7 @@ static int pwm_timer(struct gd32_pwmtimer_s *priv,
        * is driven.
        */
 
+      duty = info->duty;
       channel = priv->channels[0].channel + 1;
 #endif
 

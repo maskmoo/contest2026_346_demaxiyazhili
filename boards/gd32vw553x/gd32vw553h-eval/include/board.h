@@ -142,7 +142,7 @@
  * LEDs are only available when BOARD_LED_ENABLE is set and QSPI is disabled.
  */
 
-#ifdef CONFIG_BOARD_LED_ENABLE
+#ifdef CONFIG_USERLED
 #define GPIO_LED1 (GPIO_CFG_MODE_OUTPUT | GPIO_CFG_PUPD_NONE | GPIO_CFG_PP | \
                    GPIO_CFG_SPEED_MAX | GPIO_CFG_OUTPUT_RESET | \
                    GPIO_CFG_PORT_A | GPIO_CFG_PIN_4)
@@ -156,7 +156,7 @@
 
 /* LED index values for use with board_userled() */
 
-#ifdef CONFIG_BOARD_LED_ENABLE
+#ifdef CONFIG_USERLED
 #  define BOARD_LED1        0
 #  define BOARD_LED2        1
 #  define BOARD_LED3        2
