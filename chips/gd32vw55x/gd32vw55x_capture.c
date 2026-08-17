@@ -33,6 +33,7 @@
 #include <debug.h>
 
 #include <nuttx/irq.h>
+#include <nuttx/spinlock.h>
 #include <nuttx/arch.h>
 #include <nuttx/timers/capture.h>
 #include <arch/board/board.h>
@@ -123,8 +124,6 @@ static int cap_stop(struct cap_lowerhalf_s *lower);
 static int cap_getduty(struct cap_lowerhalf_s *lower, uint8_t *duty);
 static int cap_getfreq(struct cap_lowerhalf_s *lower, uint32_t *freq);
 static int cap_getedges(struct cap_lowerhalf_s *lower, uint32_t *edges);
-static int cap_ioctl(struct cap_lowerhalf_s *lower, int cmd,
-                     unsigned long arg);
 #ifdef CONFIG_CAPTURE_NOTIFY
 static int cap_bind(struct cap_lowerhalf_s *lower, enum cap_type_e type,
                     capture_notify_t cb, void *priv);
@@ -142,7 +141,6 @@ static const struct cap_ops_s g_capops =
   .getduty   = cap_getduty,
   .getfreq   = cap_getfreq,
   .getedges  = cap_getedges,
-  .ioctl     = cap_ioctl,
 #ifdef CONFIG_CAPTURE_NOTIFY
   .bind      = cap_bind,
   .unbind    = cap_unbind,
@@ -531,76 +529,6 @@ static int cap_getedges(struct cap_lowerhalf_s *lower, uint32_t *edges)
   *edges = priv->edges;
 
   return OK;
-}
-
-/****************************************************************************
- * Name: cap_ioctl
- *
- * Description:
- *   Lower half logic may support platform-specific ioctl commands.
- *
- ****************************************************************************/
-
-static int cap_ioctl(struct cap_lowerhalf_s *lower, int cmd,
-                     unsigned long arg)
-{
-  struct gd32_cap_s *priv = (struct gd32_cap_s *)lower;
-  int ret = OK;
-
-  switch (cmd)
-    {
-      case CAPIOC_CLR_CNT:
-        {
-          irqstate_t flags = enter_critical_section();
-
-          priv->edges  = 0;
-          priv->period = 0;
-          priv->pulse  = 0;
-
-          leave_critical_section(flags);
-        }
-        break;
-
-      case CAPIOC_PULSES:
-        {
-          int *count = (int *)((uintptr_t)arg);
-
-          DEBUGASSERT(count != NULL);
-          *count = (int)priv->edges;
-        }
-        break;
-
-      case CAPIOC_FILTER:
-        {
-          /* The glitch filter samples the input at fDTS, which is the timer
-           * clock here.  Convert the requested duration to the number of
-           * samples of the input capture filter.
-           */
-
-          uint32_t ns  = (uint32_t)arg;
-          uint32_t flt = (uint32_t)(((uint64_t)ns * priv->pclk) /
-                                    1000000000ull);
-          uint32_t chctl0;
-
-          if (flt > 15)
-            {
-              flt = 15;
-            }
-
-          chctl0  = cap_getreg(priv, GD32VW55X_TIMER_CHCTL0_OFFSET);
-          chctl0 &= ~(TIMER_CHCTL_CHCAPFLT_MASK << TIMER_CHCTL_SHIFT(0));
-          chctl0 |= (flt << TIMER_CHCTL_CHCAPFLT_SHIFT) <<
-                    TIMER_CHCTL_SHIFT(0);
-          cap_putreg(priv, GD32VW55X_TIMER_CHCTL0_OFFSET, chctl0);
-        }
-        break;
-
-      default:
-        ret = -ENOTTY;
-        break;
-    }
-
-  return ret;
 }
 
 #ifdef CONFIG_CAPTURE_NOTIFY

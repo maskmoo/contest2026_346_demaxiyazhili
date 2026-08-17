@@ -46,13 +46,13 @@ ifndef GDWIFI_SDK_VERSION
 	GDWIFI_SDK_VERSION = 945c6e28754f1bbdefb8bcd3049593fae8873bd5
 endif
 
-GDWIFI_PATCHES = $(abspath $(dir $(MAKEFILE_LIST))$(DELIM)gdwifi$(DELIM)patches$(DELIM)0001-nuttx-port.patch)
+GDWIFI_PATCHES = $(abspath $(ARCH_SRCDIR)$(DELIM)chip$(DELIM)gdwifi$(DELIM)patches$(DELIM)0001-nuttx-port.patch)
 
 GDWIFI_SDK := $(patsubst "%",%,$(CONFIG_GD32VW55X_WIFI_SDK_PATH))
 
 ifeq ($(GDWIFI_SDK),)
 
-GDWIFI_SDK = $(abspath $(dir $(MAKEFILE_LIST))$(DELIM)$(GDWIFI_SDK_REPO))
+GDWIFI_SDK = $(ARCH_SRCDIR)$(DELIM)chip$(DELIM)$(GDWIFI_SDK_REPO)
 
 $(GDWIFI_SDK):
 	$(Q) echo "Cloning GigaDevice GD32VW55x Wi-Fi/BLE SDK"
@@ -71,8 +71,7 @@ endif
 
 # Expose the SDK under chip/sdk so the source paths stay in-tree relative
 
-CHIP_DIR := $(abspath $(dir $(MAKEFILE_LIST)))
-GDWIFI_LINK := $(shell ln -sfn $(GDWIFI_SDK) $(CHIP_DIR)$(DELIM)sdk)
+GDWIFI_LINK := $(shell ln -sfn $(GDWIFI_SDK) $(ARCH_SRCDIR)$(DELIM)chip$(DELIM)sdk)
 
 SDKDIR = chip$(DELIM)sdk
 MSDK   = $(SDKDIR)$(DELIM)MSDK

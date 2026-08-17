@@ -50,6 +50,7 @@
 #include <nuttx/arch.h>
 #include <nuttx/clock.h>
 #include <nuttx/irq.h>
+#include <nuttx/spinlock.h>
 #include <nuttx/mutex.h>
 #include <nuttx/semaphore.h>
 #include <nuttx/i2c/i2c_master.h>
@@ -270,8 +271,8 @@ static const struct gd32_i2c_config_s g_i2c1_config =
 {
   .i2c_base   = GD32VW55X_I2C1_BASE,
   .clk_freq   = GD32VW55X_PCLK1_FREQ,  /* I2C1 has no clock mux: CK_APB1 */
-  .scl_pin    = GPIO_I2C1_SCL,
-  .sda_pin    = GPIO_I2C1_SDA,
+  .scl_pin    = GPIO_I2C0_SCL,
+  .sda_pin    = GPIO_I2C0_SDA,
   .rcu_en     = RCU_APB1EN_I2C1EN,
   .rcu_rst    = RCU_APB1RST_I2C1RST,
 #ifndef CONFIG_I2C_POLLED
