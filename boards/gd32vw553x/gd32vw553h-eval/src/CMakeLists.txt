@@ -26,4 +26,8 @@ if(CONFIG_GD32VW55X_SPI)
     list(APPEND SRCS gd32_spi.c)
 endif()
 
+if(CONFIG_BOARD_LCD_ENABLE)
+    list(APPEND SRCS gd32_lcd.c)
+endif()
+
 target_sources(board PRIVATE ${SRCS})

@@ -58,6 +58,12 @@
 #ifdef CONFIG_MTD_PROGMEM
 #  include <nuttx/mtd/mtd.h>
 #endif
+#ifdef CONFIG_BOARD_LCD_ENABLE
+#  include <nuttx/lcd/lcd.h>
+#endif
+#ifdef CONFIG_GRAPHICS_LVGL
+#  include <lvgl/lvgl.h>
+#endif
 
 #include "gd32vw55x_i2c.h"
 #include "gd32vw55x_spi.h"
@@ -307,6 +313,16 @@ int gd32_bringup(void)
 
 #ifdef CONFIG_GD32VW55X_WWDGT
   gd32_wwdgt_initialize("/dev/watchdog1");
+#endif
+
+#ifdef CONFIG_BOARD_LCD_ENABLE
+  /* Initialize the LCD and register /dev/lcd0 */
+
+  ret = board_lcd_initialize();
+  if (ret < 0)
+    {
+      ferr("ERROR: board_lcd_initialize failed: %d\n", ret);
+    }
 #endif
 
 #ifdef CONFIG_FS_PROCFS
