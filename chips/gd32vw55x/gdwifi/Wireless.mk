@@ -43,8 +43,8 @@ CFLAGS += -Wno-unused-function -Wno-strict-prototypes -Wno-array-parameter
 
 # Include paths: our patched config dir must come first
 
-INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)gd32vw55x$(DELIM)gdwifi$(DELIM)config
-INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)gd32vw55x$(DELIM)gdwifi
+INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)chip$(DELIM)gdwifi$(DELIM)config
+INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)chip$(DELIM)gdwifi
 INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)$(SDKDIR)$(DELIM)config
 INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)$(MSDK)$(DELIM)plf$(DELIM)riscv$(DELIM)gd32vw55x
 INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)$(MSDK)$(DELIM)plf$(DELIM)riscv$(DELIM)NMSIS$(DELIM)Core$(DELIM)Include
@@ -86,7 +86,7 @@ CHIP_CSRCS += chip$(DELIM)gdwifi$(DELIM)gdwifi_newlib_compat.c
 # top of netdev, and the headers in gdwifi/net_compat shadow the lwIP ones
 # in the SDK sources.
 CFLAGS += -DGDWIFI_NUTTX_NET
-INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)gd32vw55x$(DELIM)gdwifi$(DELIM)net_compat
+INCLUDES += $(INCDIR_PREFIX)$(ARCH_SRCDIR)$(DELIM)chip$(DELIM)gdwifi$(DELIM)net_compat
 CHIP_CSRCS += chip$(DELIM)gdwifi$(DELIM)gdwifi_netdev.c
 CHIP_CSRCS += chip$(DELIM)gdwifi$(DELIM)gdwifi_netif_compat.c
 
