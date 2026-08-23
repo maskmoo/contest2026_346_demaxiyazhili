@@ -3,7 +3,7 @@
   "team_id": "contest2026_346_demaxiyazhili",
   "github_login": "maskmoo",
   "generator": "claude-code-collector@1.3.0",
-  "updated_at": "2026-08-23T05:22:16.433Z",
+  "updated_at": "2026-08-24T01:50:44.009Z",
   "sessions": [
     {
       "session_id": "13c77505-a044-42da-8ffb-a136bb3f5fd3",
@@ -109,6 +109,18 @@
       "event_count": 253,
       "raw_event_count": 479,
       "file_path": "logs/maskmoo/2026-08-23/claude-code__935043f6-fc17-465c-a3b9-f5606b3e53d7.jsonl",
+      "collection_mode": "cli",
+      "health": "ok",
+      "model": "mimo-v2.5-pro"
+    },
+    {
+      "session_id": "b072af09-3ca3-4d69-979b-a25592a0f02a",
+      "tool": "claude-code",
+      "started_at": "2026-08-24T01:41:17.217Z",
+      "last_event_at": "2026-08-24T01:50:44.006Z",
+      "event_count": 75,
+      "raw_event_count": 137,
+      "file_path": "logs/maskmoo/2026-08-24/claude-code__b072af09-3ca3-4d69-979b-a25592a0f02a.jsonl",
       "collection_mode": "cli",
       "health": "ok",
       "model": "mimo-v2.5-pro"
