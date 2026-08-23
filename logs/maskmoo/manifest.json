@@ -3,7 +3,7 @@
   "team_id": "contest2026_346_demaxiyazhili",
   "github_login": "maskmoo",
   "generator": "claude-code-collector@1.3.0",
-  "updated_at": "2026-08-17T15:39:39.068Z",
+  "updated_at": "2026-08-23T05:22:16.433Z",
   "sessions": [
     {
       "session_id": "13c77505-a044-42da-8ffb-a136bb3f5fd3",
@@ -61,6 +61,54 @@
       "event_count": 424,
       "raw_event_count": 726,
       "file_path": "logs/maskmoo/2026-08-17/claude-code__5fed855a-cdad-47e7-aed5-bef0651829c3.jsonl",
+      "collection_mode": "cli",
+      "health": "ok",
+      "model": "mimo-v2.5-pro"
+    },
+    {
+      "session_id": "4a121d10-919a-46f0-8fed-e1ca72df4db9",
+      "tool": "claude-code",
+      "started_at": "2026-08-18T14:22:37.849Z",
+      "last_event_at": "2026-08-18T15:51:23.410Z",
+      "event_count": 190,
+      "raw_event_count": 370,
+      "file_path": "logs/maskmoo/2026-08-18/claude-code__4a121d10-919a-46f0-8fed-e1ca72df4db9.jsonl",
+      "collection_mode": "cli",
+      "health": "ok",
+      "model": "mimo-v2.5-pro"
+    },
+    {
+      "session_id": "aeaa331b-ac38-4e15-8c37-36553becdbb8",
+      "tool": "claude-code",
+      "started_at": "2026-08-19T15:27:13.851Z",
+      "last_event_at": "2026-08-19T16:25:07.598Z",
+      "event_count": 7,
+      "raw_event_count": 101,
+      "file_path": "logs/maskmoo/2026-08-20/claude-code__aeaa331b-ac38-4e15-8c37-36553becdbb8.jsonl",
+      "collection_mode": "cli",
+      "health": "ok",
+      "model": "mimo-v2.5-pro"
+    },
+    {
+      "session_id": "7d835cb5-fc5f-4735-a847-29fc1b9e18fd",
+      "tool": "claude-code",
+      "started_at": "2026-08-20T14:45:50.762Z",
+      "last_event_at": "2026-08-20T15:55:57.269Z",
+      "event_count": 312,
+      "raw_event_count": 553,
+      "file_path": "logs/maskmoo/2026-08-20/claude-code__7d835cb5-fc5f-4735-a847-29fc1b9e18fd.jsonl",
+      "collection_mode": "cli",
+      "health": "ok",
+      "model": "mimo-v2.5-pro"
+    },
+    {
+      "session_id": "935043f6-fc17-465c-a3b9-f5606b3e53d7",
+      "tool": "claude-code",
+      "started_at": "2026-08-23T02:20:25.481Z",
+      "last_event_at": "2026-08-23T05:22:16.428Z",
+      "event_count": 253,
+      "raw_event_count": 479,
+      "file_path": "logs/maskmoo/2026-08-23/claude-code__935043f6-fc17-465c-a3b9-f5606b3e53d7.jsonl",
       "collection_mode": "cli",
       "health": "ok",
       "model": "mimo-v2.5-pro"

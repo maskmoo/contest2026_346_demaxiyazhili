@@ -31,3 +31,7 @@ if(CONFIG_BOARD_LCD_ENABLE)
 endif()
 
 target_sources(board PRIVATE ${SRCS})
+
+# 链接脚本 (对标 Makefile: ARCHSCRIPT += $(BOARD_DIR)/scripts/$(LDSCRIPT))
+set(LDSCRIPT "ld.script")
+set_property(GLOBAL PROPERTY LD_SCRIPT "${NUTTX_BOARD_DIR}/scripts/${LDSCRIPT}")

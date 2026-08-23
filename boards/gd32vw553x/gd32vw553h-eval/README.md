@@ -235,6 +235,205 @@ configs/
   - WAPI 命令行工具
   - 网络连接管理
 
+## NSH 测试方式
+
+编译指定配置：
+
+```bash
+cd <openvela-workspace>
+./build.sh contest2026_346_demaxiyazhili/boards/gd32vw553x/gd32vw553h-eval/configs/<config> -j8
+```
+
+烧录后在串口 NSH 终端中执行以下命令验证各功能。
+
+### nsh — 最小 NSH 基线
+
+无额外外设驱动，仅控制台 + procfs。
+
+```nsh
+nsh> hello              # 运行 hello 示例
+nsh> ps                 # 查看任务列表
+nsh> free               # 查看内存使用
+nsh> ls /proc           # 查看 procfs
+nsh> cat /proc/uptime   # 系统运行时间
+nsh> cat /proc/version  # NuttX 版本
+nsh> reset              # 复位板子
+```
+
+### adc — ADC 模拟采样
+
+外设：ADC0（PA1 引脚），设备节点 `/dev/adc0`。
+
+```nsh
+nsh> adc                # 运行 ADC 示例，连续采样 20 次并打印原始值
+```
+
+预期输出：20 行 ADC 原始计数值（软件触发，通道 0）。
+
+### pwm — PWM 脉冲输出
+
+外设：TIMER1 PWM，设备节点 `/dev/pwm0`。
+
+```nsh
+nsh> pwm -p 50 -f 1000 -t 5   # 50% 占空比，1kHz 频率，持续 5 秒
+```
+
+预期行为：PWM 引脚输出 1kHz 方波，可用示波器或 LED 观察。
+
+### e2prom — I2C EEPROM 读写
+
+外设：I2C0（PA2/PA3），设备节点 `/dev/i2c0`。
+
+```nsh
+nsh> i2c dev 0x50 0x50         # 探测 I2C 总线上的设备（EEPROM 通常在 0x50）
+nsh> i2c get -a 0x50 -r 0x00 -n 16   # 从地址 0x50 的寄存器 0x00 读取 16 字节
+nsh> i2c set -a 0x50 -r 0x00 -d 0xAB # 向寄存器 0x00 写入 0xAB
+```
+
+预期输出：`i2c dev` 列出 ACK 的地址；`i2c get` 打印读取到的字节。
+
+### lcd — LCD 显示（ILI9341）
+
+外设：SPI0 驱动 ILI9341（320×240，RGB565 横屏），设备节点 `/dev/lcd0`、`/dev/fb0`。
+
+```nsh
+nsh> fb                 # 运行 framebuffer 示例，在 LCD 上绘制测试图案
+```
+
+预期行为：LCD 屏幕显示彩色条纹/渐变测试图案。
+
+### lvgl — LVGL 图形界面
+
+外设：同 lcd（ILI9341 + framebuffer），额外集成 LVGL 图形库。
+
+```nsh
+nsh> lvgl_demo          # 运行 LVGL 控件演示
+```
+
+预期行为：LCD 上渲染交互式 UI 控件（按钮、滑块、复选框、图表等），左上角显示 FPS 性能计数器。
+
+### littlefs — LittleFS 文件系统 + 用户 LED
+
+外设：内部 Flash MTD（`/dev/gd32flash`），挂载 LittleFS 到 `/data`；3 个用户 LED（PA4/PA5/PA6），设备节点 `/dev/userleds`。
+
+```nsh
+nsh> mount              # 查看挂载点，应包含 /data (littlefs)
+nsh> ls /data/          # 列出 LittleFS 分区内容
+nsh> echo "hello" > /data/test.txt   # 写入文件
+nsh> cat /data/test.txt # 读回验证
+nsh> leds               # 运行 LED 示例，依次闪烁三个板载 LED
+nsh> led 0 on           # 点亮 LED 0
+nsh> led 1 off          # 熄灭 LED 1
+```
+
+预期行为：`/data` 首次启动自动格式化为 LittleFS，文件跨重启持久化；`leds` 命令循环闪烁 LED。
+
+### periph — 全外设综合测试
+
+外设：I2C0、SPI0、ADC0、PWM、Input Capture、内部 Flash MTD、用户 LED、FWDGT 看门狗、WWDGT 看门狗。
+
+```nsh
+nsh> ls /dev            # 查看所有设备节点
+nsh> i2c dev 0x50 0x50  # 探测 I2C
+nsh> leds               # LED 示例
+nsh> led 0 on           # 单独控制 LED
+nsh> adc                # ADC 采样（需 adc 示例未编译时可用 cat /dev/adc0）
+nsh> cat /dev/watchdog0 # 打开独立看门狗（开始倒计时，需及时喂狗）
+```
+
+设备节点一览：`/dev/i2c0`、`/dev/spi0`、`/dev/adc0`、`/dev/pwm0`、`/dev/capture0`、`/dev/gd32flash`、`/dev/userleds`、`/dev/watchdog0`、`/dev/watchdog1`。
+
+### wapi — WiFi Station 模式
+
+外设：WiFi（wlan0 网络接口），WAPI 命令行工具。
+
+```nsh
+nsh> wapi show wlan0                          # 查看接口当前状态
+nsh> wapi scan wlan0                          # 扫描 WiFi 网络
+nsh> wapi scan_results wlan0                  # 查看扫描结果
+nsh> wapi mode wlan0 2                        # 设置为 Managed 模式 (Station)
+nsh> wapi psk wlan0 <密码> 3 2                # 设置密码 (3=CCMP, 2=WPA2)
+nsh> dhcpd_start wlan0                        # 启动 DHCP 服务（必须在连接前执行）
+nsh> wapi essid wlan0 <SSID> 1                # 连接 WiFi（等待日志出现 4-way handshake 完成）
+nsh> renew wlan0                              # 触发 NuttX DHCP 客户端，获取 IP/网关/DNS
+nsh> ifconfig                                 # 确认 IP、网关、子网掩码
+nsh> ping 8.8.8.8                             # 测试网络连通性
+nsh> wapi disconnect wlan0                    # 断开连接
+nsh> wapi power_save wlan0 off                # 关闭省电模式（可选，提升性能）
+```
+
+> **重要**：WiFi SDK 移植到 NuttX 时，SDK 内部的 DHCP 客户端已被禁用（`net_dhcp_start()` 为空操作）。WiFi 连接后需手动执行 `renew wlan0` 触发 NuttX 的 DHCP 客户端。但直接 `renew` 可能失败，需要先执行 `dhcpd_start wlan0` 初始化网络接口，之后 `renew` 才能正常从 AP 的 DHCP 服务器获取 IP。
+>
+> 注意：`wapi essid` 连接后 SDK 会报 `IPv4 addr got x.x.x.x`，这**不是**真正从 AP DHCP 获取的地址，需以 `renew` 后 `ifconfig` 显示的 IP 为准。
+
+预期行为：`dhcpd_start` + `wapi essid` 连接 + `renew` 后，从 DHCP 服务器获取真实 IP（如小米热点的 `192.168.55.x` 网段），ping 可达外部地址。
+
+**wapi psk 参数说明：**
+- `<passphrase>` — WiFi 密码
+- `<index/flag>` — 密码算法：`0`=NONE, `1`=WEP, `2`=TKIP, `3`=CCMP
+- `[wpa]` — WPA 版本：`0`=NONE, `1`=WPA1, `2`=WPA2, `3`=WPA3
+
+**wapi essid 参数说明：**
+- `<essid>` — WiFi 网络名称
+- `<index/flag>` — `0`=ESSID_OFF, `1`=ESSID_ON, `2`=ESSID_DELAY_ON
+
+### sta_softap — WiFi Station + SoftAP 双模式
+
+外设：WiFi（wlan0），含 DHCP 服务器（SoftAP 模式）。
+
+**Station 模式连接外部 AP：**
+
+```nsh
+nsh> wapi show wlan0                          # 查看接口状态
+nsh> wapi scan wlan0                          # 扫描网络
+nsh> wapi scan_results wlan0                  # 查看扫描结果
+nsh> wapi mode wlan0 2                        # Managed 模式 (Station)
+nsh> wapi psk wlan0 <密码> 3 2                # 设置密码 (CCMP + WPA2)
+nsh> dhcpd_start wlan0                        # 启动 DHCP 服务（必须在连接前执行）
+nsh> wapi essid wlan0 <SSID> 1                # 连接 WiFi（等待 4-way handshake 完成）
+nsh> renew wlan0                              # 触发 DHCP 获取 IP/网关/DNS
+nsh> ifconfig                                 # 确认网络配置
+nsh> ping 8.8.8.8                             # 测试连通性
+```
+
+**SoftAP 模式开启热点：**
+
+```nsh
+nsh> wapi mode wlan0 3                        # Master 模式 (SoftAP)
+nsh> wapi essid wlan0 <热点名称> 1             # 设置热点 SSID
+nsh> wapi psk wlan0 <密码> 3 2                # 设置热点密码
+nsh> wapi ip wlan0 192.168.4.1                # 设置 AP 网关 IP
+nsh> dhcpd_start wlan0                        # 启动 DHCP 服务器为客户端分配 IP
+```
+
+预期行为：Station 模式连接外部 AP 获取 IP；SoftAP 模式下作为热点为其他设备分配 IP。
+
+### ble — 蓝牙低功耗（BLE）
+
+外设：BLE 控制器 + WiFi（平台/RF 共享），BLE GATT 演示。
+
+```nsh
+nsh> wapi show wlan0                          # 查看 WiFi 接口状态（BLE 依赖 WiFi 平台）
+nsh> wapi scan wlan0                          # 扫描 WiFi 网络
+nsh> dhcpd_start wlan0                        # 如需联网，先启动 DHCP 服务
+nsh> renew wlan0                              # 连接 WiFi 后触发 DHCP 获取 IP
+nsh> date                                     # 查看/设置 RTC 时间
+```
+
+预期行为：BLE 控制器初始化后自动广播 GATT 服务，可用手机 BLE 扫描工具发现设备。WiFi 接口同时可用。
+
+### ostest — OS 内核回归测试
+
+无额外外设，运行 NuttX 标准测试套件。
+
+```nsh
+nsh> ostest             # 运行完整 OS 测试（线程、互斥锁、信号量、信号、消息队列、POSIX API 等）
+```
+
+预期输出：每个测试用例打印 PASS/FAIL，全部通过即表示 OS 内核功能正常。
+
+---
+
 ## 开发建议
 
 1. **首次使用**: 建议从 `nsh` 配置开始，验证基本功能
