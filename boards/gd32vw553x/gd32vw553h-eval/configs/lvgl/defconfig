@@ -28,6 +28,9 @@ CONFIG_LCD_ILI9341_IFACE0_RGB565=y
 # Board LCD support
 CONFIG_BOARD_LCD_ENABLE=y
 
+# Video device support (required for VIDEO_FB)
+CONFIG_DRIVERS_VIDEO=y
+
 # Framebuffer
 CONFIG_VIDEO_FB=y
 

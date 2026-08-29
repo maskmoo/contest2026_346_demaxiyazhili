@@ -65,9 +65,6 @@
 #ifdef CONFIG_LCD_FRAMEBUFFER
 #  include <nuttx/video/fb.h>
 #endif
-#ifdef CONFIG_GRAPHICS_LVGL
-#  include <lvgl/lvgl.h>
-#endif
 
 #include "gd32vw55x_i2c.h"
 #include "gd32vw55x_spi.h"
