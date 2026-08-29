@@ -1349,6 +1349,12 @@ static void spi_bus_initialize(struct gd32_spidev_s *priv)
   regval  = spi_getreg(priv, GD32VW55X_SPI_CTL0_OFFSET);
   regval &= SPI_INIT_MASK;
   regval |= (SPI_MASTER | SPI_CTL0_SWNSSEN);
+
+  /* Explicitly clear FF16 to ensure 8-bit frame size, matching the
+   * official GD32 demo which sets SPI_FRAMESIZE_8BIT.
+   */
+
+  regval &= ~SPI_CTL0_FF16;
   spi_putreg(priv, GD32VW55X_SPI_CTL0_OFFSET, regval);
 
   /* CTL1: no DMA, no interrupts, no TI mode */

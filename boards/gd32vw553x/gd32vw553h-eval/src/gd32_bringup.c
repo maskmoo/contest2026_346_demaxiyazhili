@@ -30,6 +30,7 @@
 #include <debug.h>
 
 #include <nuttx/fs/fs.h>
+#include <nuttx/board.h>
 
 #ifdef CONFIG_I2C_DRIVER
 #  include <nuttx/i2c/i2c_master.h>
@@ -60,6 +61,9 @@
 #endif
 #ifdef CONFIG_BOARD_LCD_ENABLE
 #  include <nuttx/lcd/lcd.h>
+#endif
+#ifdef CONFIG_LCD_FRAMEBUFFER
+#  include <nuttx/video/fb.h>
 #endif
 #ifdef CONFIG_GRAPHICS_LVGL
 #  include <lvgl/lvgl.h>
@@ -323,6 +327,16 @@ int gd32_bringup(void)
     {
       ferr("ERROR: board_lcd_initialize failed: %d\n", ret);
     }
+
+#ifdef CONFIG_LCD_FRAMEBUFFER
+  /* Register /dev/fb0 framebuffer device */
+
+  ret = fb_register(0, 0);
+  if (ret < 0)
+    {
+      ferr("ERROR: fb_register failed: %d\n", ret);
+    }
+#endif
 #endif
 
 #ifdef CONFIG_FS_PROCFS

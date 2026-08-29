@@ -56,9 +56,9 @@
  */
 
 #ifdef CONFIG_GD32VW55X_SPI
-#  define GPIO_SPI_SCK   GPIO_SPI_SCK_2    /* PA11, AF5 */
-#  define GPIO_SPI_MISO  GPIO_SPI_MISO_2   /* PA10, AF5 */
-#  define GPIO_SPI_MOSI  GPIO_SPI_MOSI_2   /* PA9, AF5 */
+#  define GPIO_SPI_SCK   GPIO_SPI_SCK_4    /* PA11, AF0 */
+#  define GPIO_SPI_MISO  GPIO_SPI_MISO_4   /* PA10, AF0 */
+#  define GPIO_SPI_MOSI  GPIO_SPI_MOSI_4   /* PA9, AF0 */
 
 /* SPI chip select for LCD: a plain GPIO output on PA12,
  * driven by gd32_spi0select().  Active low, idles high.

@@ -20,6 +20,11 @@
 #
 # ##############################################################################
 
+config ARCH_BOARD_GD32VW553H_EVAL
+	bool "GD32VW553H-EVAL board"
+	default y if ARCH_BOARD_CUSTOM && ARCH_BOARD_CUSTOM_NAME = "gd32vw553h-eval"
+	depends on ARCH_BOARD_CUSTOM
+
 if ARCH_BOARD_GD32VW553H_EVAL
 
 # Resource conflict: PA4/PA5/PA6 are shared between LED and QSPI Flash
