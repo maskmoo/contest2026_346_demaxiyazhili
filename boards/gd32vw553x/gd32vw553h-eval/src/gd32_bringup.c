@@ -61,6 +61,9 @@
 #endif
 #ifdef CONFIG_BOARD_LCD_ENABLE
 #  include <nuttx/lcd/lcd.h>
+#  ifndef CONFIG_LCD_FRAMEBUFFER
+#    include <nuttx/lcd/lcd_dev.h>
+#  endif
 #endif
 #ifdef CONFIG_LCD_FRAMEBUFFER
 #  include <nuttx/video/fb.h>
@@ -317,12 +320,13 @@ int gd32_bringup(void)
 #endif
 
 #ifdef CONFIG_BOARD_LCD_ENABLE
-  /* Initialize the LCD and register /dev/lcd0 */
+  /* Initialize the LCD hardware */
 
   ret = board_lcd_initialize();
   if (ret < 0)
     {
       ferr("ERROR: board_lcd_initialize failed: %d\n", ret);
+      return ret;
     }
 
 #ifdef CONFIG_LCD_FRAMEBUFFER
@@ -332,6 +336,16 @@ int gd32_bringup(void)
   if (ret < 0)
     {
       ferr("ERROR: fb_register failed: %d\n", ret);
+      return ret;
+    }
+#else
+  /* Without framebuffer, expose the LCD as /dev/lcd0 for user-space access. */
+
+  ret = lcddev_register(0);
+  if (ret < 0)
+    {
+      ferr("ERROR: lcddev_register failed: %d\n", ret);
+      return ret;
     }
 #endif
 #endif

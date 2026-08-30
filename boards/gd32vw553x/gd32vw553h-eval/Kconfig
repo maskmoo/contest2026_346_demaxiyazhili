@@ -69,6 +69,16 @@ config BOARD_LCD_ENABLE
 	bool "Enable LCD"
 	default y if !GD32VW55X_I2C1
 	depends on !GD32VW55X_I2C1
+	select SPI
+	select GD32VW55X_SPI
+	select LCD
+	select LCD_DEV
+	select LCD_FRAMEBUFFER
+	select LCD_NOGETRUN
+	select LCD_ILI9341
+	select LCD_ILI9341_IFACE0
+	select DRIVERS_VIDEO
+	select VIDEO_FB
 	---help---
 		Enable LCD display using SPI (PA9-PA12) with
 		LCD_RESET (PB12) and LCD_D/C (PB13).
