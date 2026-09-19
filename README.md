@@ -1,148 +1,105 @@
-# contest2026_346_demaxiyazhili
+# GD32VW553H-EVAL openvela 适配
 
-👋 欢迎参加 **2026 首届 openvela AI 硬件开发者大赛**！
+## 一、作品简介
 
-这是组委会为你的队伍创建的**专属参赛仓库**（本仓为样例/模板，队伍编号 `346`；你看到的将是你自己的 `contest2026_<编号>_<队伍名>`）。比赛期间，你的全部参赛代码、打包产物与 AI Coding 日志都提交到这里。
+本作品将 **openvela 实时操作系统**移植到 **GD32VW553H-EVAL** 开发板上，基于兆易创新 GD32VW553X RISC-V 内核 MCU，实现了包括 WiFi（STA + SoftAP）、BLE 蓝牙、ILI9341 SPI LCD 显示屏、ADC、PWM、I2C、SPI、e2prom、LittleFS 文件系统、看门狗等外设驱动的完整适配。
 
-> 本仓既是「代码仓」，又内置了一键拉取整套 openvela 工程的 `repo` 清单（manifest）。你只需跟它打交道，**自始至终只动一个文件夹**。
+**亮点：**
 
----
+- **RISC-V 架构适配**：完成 GD32VW553X 芯片级 HAL 驱动移植，涵盖 GPIO、UART、SPI、I2C、ADC、PWM、DMA、RTC、CRC、看门狗等十余种外设
+- **无线连接**：WiFi STA/SoftAP 双模式 + BLE 蓝牙，支持常见无线场景
+- **图形显示**：ILI9341 SPI LCD 驱动
+- **丰富配置集**：提供 12 个独立 defconfig 配置（nsh、periph、lcd、ble、sta_softap、wapi、adc、pwm、e2prom、littlefs、ostest 等），方便快速验证各子系统
 
-## 一、先读这些官方文档
+## 二、选题方向
 
-**通用（所有赛道必读）：**
+**新硬件适配**
 
-| 文档                                                                                                                                     | 用途                                           |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| [《大赛总览》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/contest_overview.md)                        | 赛道、流程、评分、资源，建议先通读             |
-| [《参赛代码提交指南》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/code_submission_guide.md)           | 仓库获取、提交流程、时间与权限（**以此为准**） |
-| [《AI Coding 日志归集与提交手册》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_coding_log_guide.md) | 如何导出 AI 对话日志并提交到 `logs/`           |
+GD32VW553H-EVAL 是一款集 RISC-V 内核、WiFi、BLE 于一体的高集成度开发板，此前 openvela 尚未支持该平台。本作品完成从芯片级到板级的完整 BSP 移植，使 openvela 生态新增一款可用的 RISC-V + 无线连接硬件平台。
 
-**按你的赛道选读（三选一）：**
+## 三、目录结构
 
-| 赛道                  | 教程导航                                                                                                                                                 |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 快应用 / 手表应用创新 | [快应用教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/quickapp/quickapp_guide_index.md)                         |
-| AI 硬件产品创新       | [AI 硬件赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_hardware/ai_hardware_guide_index.md)              |
-| 新硬件适配            | [新硬件适配赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/hardware_porting/hardware_porting_guide_index.md) |
+```
+├── chips/gd32vw55x/                — 芯片级 HAL 驱动（GPIO/UART/SPI/I2C/ADC/PWM/DMA 等）
+│   ├── gdwifi/                     — WiFi 底层驱动适配
+│   └── gdble/                      — BLE 蓝牙底层驱动适配
+├── boards/gd32vw553x/
+│   └── gd32vw553h-eval/            — 板级支持包（BSP）
+│       ├── src/                    — 板级初始化代码（boot/bringup/LCD/SPI/LED/按键等）
+│       ├── include/                — 板级头文件
+│       ├── scripts/                — 链接脚本
+│       └── configs/                — 12 个 defconfig 配置集
+│           ├── nsh/                — 最小 NSH Shell
+│           ├── periph/             — 外设综合测试
+│           ├── lcd/                — LCD 显示
+│           ├── ble/                — BLE 蓝牙
+│           ├── sta_softap/         — WiFi STA + SoftAP
+│           ├── wapi/               — WiFi API 测试
+│           ├── adc/                — ADC 采集
+│           ├── pwm/                — PWM 输出
+│           ├── e2prom/             — EEPROM 读写
+│           ├── littlefs/           — LittleFS 文件系统
+│           └── ostest/             — 操作系统功能测试
+├── app/hello_app/                  — 示例应用（Hello World）
+├── quickapp/                       — 快应用示例
+├── doc/                            — 开发文档与移植计划
+├── logs/                           — AI Coding 日志
+├── contest2026_346_demaxiyazhili.xml — repo manifest（本仓映射）
+└── openvela.xml                    — openvela 主 manifest
+```
 
----
+## 四、运行方式
 
-## 二、第一步：拉取完整工程
-
-用组委会提供的命令一键拉取「openvela 全量源码 + 你的专属仓」：
+### 1. 拉取完整工程
 
 ```bash
-repo init -u https://github.com/open-vela/contest2026_346_demaxiyazhili \
+repo init -u https://github.com/maskmoo/contest2026_346_demaxiyazhili \
   -b dev-ai-contest-2026 -m contest2026_346_demaxiyazhili.xml
 repo sync -c -j8
 ```
 
-同步后，你的整个仓库位于工作区的 `contest2026_346_demaxiyazhili/`，openvela 全量源码在外层（`nuttx/`、`apps/`、`packages/`、`vendor/` 等）。
+### 2. 编译
 
----
-
-## 三、第二步：在哪里写代码
-
-**只在自己的仓目录 `contest2026_346_demaxiyazhili/` 里开发。** 不同作品形态放在对应子目录，manifest 会通过 `<linkfile>` 把它们**软链**到 openvela 编译树该在的位置——你不用手动 copy：
-
-| 作品形态 | 你的代码放这里             | 系统自动映射到                                 |
-| -------- | -------------------------- | ---------------------------------------------- |
-| 应用     | `app/hello_app/`           | `packages/demos/contest2026_346_hello_app`     |
-| 快应用   | `quickapp/hello_quickapp/` | `packages/apps/contest2026_346_hello_quickapp` |
-| 板级适配 | `board/contest_board/`     | `vendor/openvela/boards/contest2026_346_board` |
-
-> 用不到的形态目录可以删掉；新增作品时按同样规则加子目录，并在 `contest2026_346_demaxiyazhili.xml` 里补一条 `<linkfile>` 映射即可。**生产仓库（packages/nuttx/vendor 等）零改动。**
-
-建议仓库目录约定（便于评委定位）：
-
-```text
-app/ | quickapp/ | board/   # 你的作品代码
-logs/                       # AI Coding 日志（主动导出后提交，格式见 logs/README.md）
-README.md                   # 作品说明（提交前请改成你自己的，见第六节）
-```
-
-> 仓内附带了一个 `.gitignore.example`，给出了**编译产物**等不需要进仓的文件示例。如需启用，`cp .gitignore.example .gitignore` 后按需增删即可。**注意 `logs/` 下最终导出的 AI Coding 日志必须提交，不要忽略。**
->
-> `logs/` 的目录结构与提交格式见 [logs/README.md](logs/README.md)。
-
----
-
-## 四、第三步：编译与运行
-
-编译/运行步骤随作品形态不同而不同，请参考你所在赛道的教程导航：
-
-- 快应用 / 手表应用：[快应用教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/quickapp/quickapp_guide_index.md)（含模拟器与开发板部署）。
-- AI 硬件产品创新：[AI 硬件赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_hardware/ai_hardware_guide_index.md)（环境搭建、编译烧录、Skill 开发）。
-- 新硬件适配：[新硬件适配赛道教程导航](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/hardware_porting/hardware_porting_guide_index.md)（BSP 移植、最小 NSH 基线）。
-
-子目录已通过 manifest 中的 `<linkfile>` 软链进 openvela 编译树，因此构建在 openvela 工作区**根目录**（即你这个仓的上一级）进行。openvela 使用 `build.sh` 作为统一入口，接收一个 **board config 路径**作为参数：
+进入 openvela 工作区根目录（仓库上一级），使用 `build.sh` 编译：
 
 ```bash
-# 进入 openvela 工作区根目录（你的仓的上一级）
 cd ..
 
-# 通用语法：第一个参数是 board config 路径，第二个参数可以是 menuconfig / distclean 等
-./build.sh <board-config-path> [menuconfig|distclean] [-j8]
+# 最小 NSH Shell
+./build.sh vendor/openvela/boards/gd32vw553x/gd32vw553h-eval/configs/nsh -j8
+
+# LCD 显示
+./build.sh vendor/openvela/boards/gd32vw553x/gd32vw553h-eval/configs/lcd -j8
+
+# WiFi STA + SoftAP
+./build.sh vendor/openvela/boards/gd32vw553x/gd32vw553h-eval/configs/sta_softap -j8
+
+# BLE 蓝牙
+./build.sh vendor/openvela/boards/gd32vw553x/gd32vw553h-eval/configs/ble -j8
+
+# 外设综合测试
+./build.sh vendor/openvela/boards/gd32vw553x/gd32vw553h-eval/configs/periph -j8
 ```
 
-> 具体的 board config 路径、目标产物、模拟器/真机部署方式请以你所在赛道的教程导航为准。本仓 `app/` `quickapp/` `board/` 三个示例骨架对应的 Kconfig 选项可通过 `menuconfig` 启用。
+其他配置（adc / pwm / e2prom / littlefs / ostest / wapi）替换 configs 路径即可。
 
----
+### 3. 烧录与运行
 
-## 五、第四步：提交作品
+编译产物通过 J-Link / OpenOCD 等调试器烧录到 GD32VW553H-EVAL 开发板，上电后通过串口（115200 baud）进入 NSH Shell 即可交互。
 
-1. **fork** 你的专属仓 → 开发 → `git commit` 并推送 → 向专属仓发起 **Pull Request**，可**自行 review 并合入**（无需等组委会）。
-2. **AI Coding 日志**：与 AI 工具的对话会自动记录到本机 staging（不会自动上传），需你**主动导出/打包**选定会话到仓内 `logs/` 目录后一并提交。详见[《AI Coding 日志归集与提交手册》](https://github.com/open-vela/docs/blob/dev-ai-contest-2026/zh-cn/contest_2026/ai_coding_log_guide.md)。
-3. 若需改动 **nuttx 等公共仓库**，不在本仓改，而是 fork 对应公共仓、以 PR 提交到 `dev-ai-contest-2026` 分支，由组委会 review 后合入。
+### 4. 如需 menuconfig
 
-> ⏰ **提交作品截止：9 月 20 日**。截止后统一收回 push 权限，仍可查看 / clone。
->
-> 获奖后再按要求将作品 PR 至 openvela 上游对应仓库（走标准 PR + CI 流程）。
-
-### 关于 PR 与 CLA
-
-- 本仓所有改动通过 **Pull Request** 合入（分支保护强制，可自行合入自己的 PR）。
-- 首次贡献需在[**官网签署 CLA**](https://openvela.com/#/community/cla)；PR 上会自动跑 `cla/signature` 检查，在官网签署成功后，在 PR 评论 `/check-cla` 复检即可通过。
-
----
-
-## 六、提交前：把本 README 改成你的作品说明
-
-本文件目前是组委会给的**使用说明书**。**作品提交前，请把它替换成你自己作品的说明**，方便评委快速了解你做了什么、怎么跑起来。建议至少包含以下内容：
-
-```markdown
-# <你的作品名>
-
-## 一、作品简介
-<一句话/一段话说明这个作品是什么、解决什么问题、亮点在哪>
-
-## 二、选题方向
-<快应用 / 手表应用创新 ｜ AI 硬件产品创新 ｜ 新硬件适配 ｜ 自定方向，并简述理由>
-
-## 三、目录结构
-<列出你这个仓里各目录/文件的作用，例如：>
-- `app/xxx/`        — <说明>
-- `board/xxx/`      — <说明>
-- `quickapp/xxx/`   — <说明>
-- `logs/`           — AI Coding 日志
-- `docs/` 或其他    — <说明>
-
-## 四、运行方式
-<拉取工程后，如何编译、烧录/部署、运行的完整步骤；最好能让评委照着一步步复现>
+```bash
+./build.sh vendor/openvela/boards/gd32vw553x/gd32vw553h-eval/configs/nsh menuconfig
+```
 
 ## 五、AI Coding 使用说明
-<说明本作品如何借助 AI 辅助开发：
-- 在需求拆解 / 方案设计 / 编码 / 调试 / 文档等环节如何与 AI 协作；
-- AI 对开发效率或质量带来的实际帮助。
-完整对话日志见 logs/ 目录>
-```
 
-> 提示：将会根据「作品本身 + 你的 README 说明 + `logs/` 里的 AI Coding 日志」来理解和评估你的作品，README 写清楚很重要。
+本作品在开发过程中借助 Claude Code（AI 辅助编程工具）完成多个环节：
 
----
+- **方案设计**：通过 AI 分析 GD32VW553X 芯片手册与 openvela 现有 BSP 架构，确定移植方案与目录结构
+- **编码实现**：AI 辅助生成芯片级 HAL 驱动框架、板级初始化代码、Kconfig/Makefile/CMakeLists.txt 构建文件
+- **调试排错**：WiFi 配置构建错误（wapi config）、CMake 适配等问题通过 AI 快速定位与修复
+- **文档输出**：README、移植文档等由 AI 协助编写
 
-## 附：仓库命名规范
-
-`contest2026_<编号>_<队伍名>` — 编号三位零填充；队名 slug（全小写、英文/拼音、连字符）。例：`contest2026_346_demaxiyazhili`。
-（仓库由组委会统一创建，**每队仅一个仓**，无需自行命名。）
+完整 AI Coding 对话日志见 `logs/` 目录。
