@@ -35,6 +35,7 @@
 #include <nuttx/arch.h>
 #include <nuttx/board.h>
 #include <nuttx/spi/spi.h>
+#include <nuttx/lcd/lcd.h>
 #include <nuttx/lcd/ili9341.h>
 #include <nuttx/video/fb.h>
 
@@ -65,7 +66,9 @@
 /* Display orientation */
 
 #ifdef CONFIG_LCD_LANDSCAPE
-#  define GD32_ILI9341_MADCTL_PARAM  (ILI9341_MEMORY_ACCESS_CONTROL_MV | \
+#  define GD32_ILI9341_MADCTL_PARAM  (ILI9341_MEMORY_ACCESS_CONTROL_MY | \
+                                      ILI9341_MEMORY_ACCESS_CONTROL_MX | \
+                                      ILI9341_MEMORY_ACCESS_CONTROL_MV | \
                                       ILI9341_MEMORY_ACCESS_CONTROL_BGR)
 #  define ILI9341_XRES               320
 #  define ILI9341_YRES               240
@@ -128,19 +131,27 @@ static struct lcd_dev_s *g_lcd = NULL;
 static void gd32_ili93414ws_select(struct ili9341_lcd_s *lcd)
 {
   struct gd32_ili9341_lcd_s *priv = (struct gd32_ili9341_lcd_s *)lcd;
+  static bool configured = false;
 
   /* Lock the SPI bus */
 
   SPI_LOCK(priv->spi, true);
 
+  /* Set frequency and mode BEFORE asserting CS (only once).
+   * Changing frequency/mode disables/re-enables SPI which would
+   * glitch the clock if CS is already low, confusing the ILI9341.
+   */
+
+  if (!configured)
+    {
+      SPI_SETFREQUENCY(priv->spi, CONFIG_GD32VW553H_EVAL_ILI9341_SPIFREQUENCY);
+      SPI_SETMODE(priv->spi, SPIDEV_MODE3);
+      configured = true;
+    }
+
   /* Select the LCD */
 
   SPI_SELECT(priv->spi, SPIDEV_DISPLAY(0), true);
-
-  /* Set frequency and mode */
-
-  SPI_SETFREQUENCY(priv->spi, CONFIG_GD32VW553H_EVAL_ILI9341_SPIFREQUENCY);
-  SPI_SETMODE(priv->spi, SPIDEV_MODE0);
 }
 
 /****************************************************************************
@@ -408,6 +419,10 @@ int board_lcd_initialize(void)
       lcderr("ERROR: Failed to initialize ILI9341 driver\n");
       return -ENODEV;
     }
+
+  /* Turn the display on (ili9341_hwinitialize leaves it off) */
+
+  g_lcd->setpower(g_lcd, 1);
 
   lcdinfo("LCD initialized successfully\n");
   return OK;

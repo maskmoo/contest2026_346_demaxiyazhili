@@ -353,7 +353,6 @@ nsh> wapi scan wlan0                          # 扫描 WiFi 网络
 nsh> wapi scan_results wlan0                  # 查看扫描结果
 nsh> wapi mode wlan0 2                        # 设置为 Managed 模式 (Station)
 nsh> wapi psk wlan0 <密码> 3 2                # 设置密码 (3=CCMP, 2=WPA2)
-nsh> dhcpd_start wlan0                        # 启动 DHCP 服务（必须在连接前执行）
 nsh> wapi essid wlan0 <SSID> 1                # 连接 WiFi（等待日志出现 4-way handshake 完成）
 nsh> renew wlan0                              # 触发 NuttX DHCP 客户端，获取 IP/网关/DNS
 nsh> ifconfig                                 # 确认 IP、网关、子网掩码
@@ -362,11 +361,11 @@ nsh> wapi disconnect wlan0                    # 断开连接
 nsh> wapi power_save wlan0 off                # 关闭省电模式（可选，提升性能）
 ```
 
-> **重要**：WiFi SDK 移植到 NuttX 时，SDK 内部的 DHCP 客户端已被禁用（`net_dhcp_start()` 为空操作）。WiFi 连接后需手动执行 `renew wlan0` 触发 NuttX 的 DHCP 客户端。但直接 `renew` 可能失败，需要先执行 `dhcpd_start wlan0` 初始化网络接口，之后 `renew` 才能正常从 AP 的 DHCP 服务器获取 IP。
+> **重要**：WiFi SDK 移植到 NuttX 时，SDK 内部的 DHCP 客户端已被禁用（`net_dhcp_start()` 为空操作）。WiFi 连接后需手动执行 `renew wlan0` 触发 NuttX 的 DHCP 客户端。
 >
 > 注意：`wapi essid` 连接后 SDK 会报 `IPv4 addr got x.x.x.x`，这**不是**真正从 AP DHCP 获取的地址，需以 `renew` 后 `ifconfig` 显示的 IP 为准。
 
-预期行为：`dhcpd_start` + `wapi essid` 连接 + `renew` 后，从 DHCP 服务器获取真实 IP（如小米热点的 `192.168.55.x` 网段），ping 可达外部地址。
+预期行为：`wapi essid` 连接 + `renew` 后，从 DHCP 服务器获取真实 IP（如小米热点的 `192.168.55.x` 网段），ping 可达外部地址。
 
 **wapi psk 参数说明：**
 - `<passphrase>` — WiFi 密码
@@ -377,9 +376,9 @@ nsh> wapi power_save wlan0 off                # 关闭省电模式（可选，�
 - `<essid>` — WiFi 网络名称
 - `<index/flag>` — `0`=ESSID_OFF, `1`=ESSID_ON, `2`=ESSID_DELAY_ON
 
-### sta_softap — WiFi Station + SoftAP 双模式
+### sta_softap — WiFi Station / SoftAP 模式
 
-外设：WiFi（wlan0），含 DHCP 服务器（SoftAP 模式）。
+外设：WiFi（wlan0），含 DHCP 服务器（SoftAP 模式）。GD32VW553H 仅支持单 VIF，Station 和 SoftAP 不能同时运行，此配置提供两种模式的命令行示例，按需切换使用。
 
 **Station 模式连接外部 AP：**
 
@@ -389,7 +388,6 @@ nsh> wapi scan wlan0                          # 扫描网络
 nsh> wapi scan_results wlan0                  # 查看扫描结果
 nsh> wapi mode wlan0 2                        # Managed 模式 (Station)
 nsh> wapi psk wlan0 <密码> 3 2                # 设置密码 (CCMP + WPA2)
-nsh> dhcpd_start wlan0                        # 启动 DHCP 服务（必须在连接前执行）
 nsh> wapi essid wlan0 <SSID> 1                # 连接 WiFi（等待 4-way handshake 完成）
 nsh> renew wlan0                              # 触发 DHCP 获取 IP/网关/DNS
 nsh> ifconfig                                 # 确认网络配置
@@ -402,11 +400,12 @@ nsh> ping 8.8.8.8                             # 测试连通性
 nsh> wapi mode wlan0 3                        # Master 模式 (SoftAP)
 nsh> wapi essid wlan0 <热点名称> 1             # 设置热点 SSID
 nsh> wapi psk wlan0 <密码> 3 2                # 设置热点密码
-nsh> wapi ip wlan0 192.168.4.1                # 设置 AP 网关 IP
 nsh> dhcpd_start wlan0                        # 启动 DHCP 服务器为客户端分配 IP
 ```
 
-预期行为：Station 模式连接外部 AP 获取 IP；SoftAP 模式下作为热点为其他设备分配 IP。
+> **注意**：GD32VW553H 的 WiFi 固件仅支持单 VIF，同一时刻只能工作在 Station 或 SoftAP 模式之一，不能同时运行。`dhcpd_start` 会将接口 IP 设为 NuttX DHCPD 默认的 `10.0.0.1`（网段 `10.0.0.0/24`），客户端从 `10.0.0.2` 开始分配。若需自定义网段，需在 defconfig 中配置 `CONFIG_NETUTILS_DHCPD_HOST` 及相关选项。
+
+预期行为：Station 模式连接外部 AP 获取 IP；SoftAP 模式下接口 IP 为 `10.0.0.1`，连接热点的设备自动获取 `10.0.0.x` 地址。测试时可用手机连接热点，手动设置静态 IP（如 `10.0.0.2`）或等待 DHCP 分配，然后在 NSH 中 `ping 10.0.0.2` 验证连通性。
 
 ### ble — 蓝牙低功耗（BLE）
 
@@ -414,13 +413,26 @@ nsh> dhcpd_start wlan0                        # 启动 DHCP 服务器为客户�
 
 ```nsh
 nsh> wapi show wlan0                          # 查看 WiFi 接口状态（BLE 依赖 WiFi 平台）
-nsh> wapi scan wlan0                          # 扫描 WiFi 网络
-nsh> dhcpd_start wlan0                        # 如需联网，先启动 DHCP 服务
-nsh> renew wlan0                              # 连接 WiFi 后触发 DHCP 获取 IP
 nsh> date                                     # 查看/设置 RTC 时间
 ```
 
 预期行为：BLE 控制器初始化后自动广播 GATT 服务，可用手机 BLE 扫描工具发现设备。WiFi 接口同时可用。
+
+#### BLE 已知问题
+
+**1. 硬件复位后 BLE PMU 唤醒慢（~10 秒）**
+
+硬件复位后，系统可能在 `gdwifi: wifi_init done` 之后卡住约 10 秒才进入 NSH。
+
+根因：`ble_power_on()` → `ble_pmu_config(1)` 中 `while (pmu_flag_get(PMU_FLAG_BLE_ACTIVE) != SET)` 等待 BLE PMU 进入 active 状态，硬件复位后该标志置位较慢。BLE PMU 电源域的唤醒依赖 RF 时钟稳定，而 WiFi 初始化（`gdwifi_start()`）中的 RF 上电/校准流程可能影响 BLE PMU 的响应时间。
+
+状态：待排查。可能需要在 `ble_power_on()` 之前插入 BLE PMU 电源循环（类似 WiFi 的 `wifi_power_off()` → `wifi_power_on()`），或调整 BLE 初始化时序。
+
+**2. BLE 广播回调竞态条件（已修复）**
+
+原代码中 `ble_adp_callback_register()` 在 `ble_sw_init()` 之后调用，但 NuttX 调度器已在运行，`ble_sw_init()` 创建的 BLE 任务可能立即执行并发出 `BLE_ADP_EVT_ENABLE_CMPL_INFO` 事件，此时回调尚未注册，导致事件丢失，广播永远不启动。
+
+修复：用 `sched_lock()` / `sched_unlock()` 包裹 `ble_sw_init()` + 回调注册，确保 BLE 任务在回调就绪后才能被调度。见 `chips/gd32vw55x/gdble/gd32_ble.c`。
 
 ### ostest — OS 内核回归测试
 

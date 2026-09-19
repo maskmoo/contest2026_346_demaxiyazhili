@@ -1,0 +1,12 @@
+{
+  "ts": "2026-08-24T01:55:00.678Z",
+  "kind": "manifest_read",
+  "tool": "claude-code",
+  "team_id": "contest2026_346_demaxiyazhili",
+  "version": "1.3.0",
+  "context": {
+    "tool": "claude-code",
+    "path": "/home/maskmoo/openvela/contest2026_346_demaxiyazhili/logs/maskmoo/manifest.json"
+  },
+  "message": "Expecting property name enclosed in double quotes: line 6 column 1 (char 150)"
+}

@@ -3,8 +3,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# Board-level CMakeLists.txt for GD32VW553H-EVAL board
-#
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -16,46 +14,31 @@
 #
 ############################################################################
 
-# 板级源文件
-set(BOARD_SRCS
-    src/gd32vw553h-eval_board.c
-)
-
-# 板级头文件路径
-set(BOARD_INCLUDES
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-# 板级编译选项
-set(BOARD_CFLAGS
-    -DGD32VW553H_EVAL
-)
-
-# 板级链接脚本
-set(BOARD_LDSCRIPT
-    ${CMAKE_CURRENT_SOURCE_DIR}/scripts/gd32vw553h-eval.ld
-)
-
-# 根据配置添加功能模块
-if(CONFIG_GD32VW55X_WIFI)
-    # Wi-Fi 相关源文件
-    list(APPEND BOARD_SRCS
-        src/gd32vw55x_wifi_board.c
-    )
-endif()
-
-if(CONFIG_GD32VW55X_BLE)
-    # BLE 相关源文件
-    list(APPEND BOARD_SRCS
-        src/gd32vw55x_ble_board.c
-    )
-endif()
-
-# 导出板级配置
-set(BOARD_SRCS "${BOARD_SRCS}" PARENT_SCOPE)
-set(BOARD_INCLUDES "${BOARD_INCLUDES}" PARENT_SCOPE)
-set(BOARD_CFLAGS "${BOARD_CFLAGS}" PARENT_SCOPE)
-set(BOARD_LDSCRIPT "${BOARD_LDSCRIPT}" PARENT_SCOPE)
-
-# 包含 src 子目录 (对标 Makefile: include src/Makefile)
 add_subdirectory(src)
+
+# ===========================================================================
+# 板级编译参数 (对应 scripts/Make.defs)
+# ===========================================================================
+
+# 链接脚本 (Make.defs: LDSCRIPT = ld.script → ARCHSCRIPT += ...)
+set_property(GLOBAL PROPERTY LD_SCRIPT
+             ${NUTTX_BOARD_DIR}/scripts/ld.script)
+
+# 禁用链接器松弛优化 (Make.defs: ARCHCPUFLAGS += -mno-relax)
+# 确保 Wi-Fi/BLE 预编译库链接兼容性
+target_compile_options(arch PRIVATE -mno-relax)
+
+# RISC-V 架构标识宏 (Make.defs: ARCHDEFINES += -DARCH_RISCV)
+target_compile_definitions(arch PRIVATE ARCH_RISCV)
+
+# 栈溢出检测 (Make.defs: ARCHCFLAGS += -finstrument-functions -ffixed-s11)
+# -finstrument-functions: 编译器在每个函数入口/出口插入回调
+# -ffixed-s11: 固定 s11 寄存器用于栈溢出检测 (不被编译器分配)
+if(CONFIG_STACK_OVERFLOW_CHECK)
+    target_compile_options(arch PRIVATE -finstrument-functions -ffixed-s11)
+endif()
+
+# 禁用 .note.gnu.build-id section
+# 不禁用的话，该 section 会将 .text 从 0x08000000 推到 0x08000100，
+# 导致 CPU 从 0x08000000 取不到有效代码，固件无法启动
+target_link_options(nuttx PRIVATE -Wl,--build-id=none)

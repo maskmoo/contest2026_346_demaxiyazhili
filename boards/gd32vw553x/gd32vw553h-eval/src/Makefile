@@ -42,4 +42,8 @@ ifeq ($(CONFIG_GD32VW55X_SPI),y)
 CSRCS += gd32_spi.c
 endif
 
+ifeq ($(CONFIG_BOARD_LCD_ENABLE),y)
+CSRCS += gd32_lcd.c
+endif
+
 include $(TOPDIR)/boards/Board.mk

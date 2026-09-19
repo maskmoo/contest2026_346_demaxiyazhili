@@ -52,6 +52,7 @@
 #include <syslog.h>
 
 #include <nuttx/irq.h>
+#include <nuttx/sched.h>
 
 /* Vendor SDK BLE host headers */
 
@@ -489,7 +490,13 @@ int gd32_ble_initialize(void)
 
   memset(&param, 0, sizeof(param));
 
-  /* Mandatory order: power on -> ble_sw_init -> callbacks -> IRQs */
+  /* Mandatory order: power on -> ble_sw_init -> callbacks -> IRQs.
+   *
+   * board_late_initialize() runs in the AppBringUp thread with the
+   * scheduler unlocked.  Lock the scheduler around ble_sw_init() and
+   * callback registration so the newly created BLE task cannot preempt
+   * us until the callback is in place.
+   */
 
   ble_power_on();
 
@@ -502,9 +509,11 @@ int gd32_ble_initialize(void)
   param.p_os_api                = &os_api;
   param.p_hci_uart_func         = NULL;  /* internal host, no HCI transport */
 
+  sched_lock();
   status = ble_sw_init(&param);
   if (status != BLE_ERR_NO_ERROR)
     {
+      sched_unlock();
       wlerr("ERROR: ble_sw_init failed: %d\n", status);
       return -EIO;
     }
@@ -514,6 +523,7 @@ int gd32_ble_initialize(void)
   /* Restart advertising when a central disconnects */
 
   ble_conn_callback_register(gd32_ble_conn_evt_handler);
+  sched_unlock();
 
 #ifdef CONFIG_GD32VW55X_BLE_GATT_DEMO
   /* Register the demo GATT service (RX write / TX notify) */
